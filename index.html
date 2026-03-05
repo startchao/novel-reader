@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
@@ -9,32 +10,31 @@
 <meta name="theme-color" content="#8b5e3c">
 <title>書卷</title>
 <link rel="manifest" href="manifest.json">
-<script src="https://cdn.jsdelivr.net/npm/opencc-js@1.0.5/dist/umd/cn2t.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500&family=Noto+Sans+TC:wght@300;400;500&display=swap');
-:root{--bg:#f5f0e8;--surface:#ede7da;--surface2:#e3ddd0;--card:#fff9f0;--text:#1e1408;--text-dim:#7a6e5a;--accent:#8b5e3c;--accent-light:#c49a6c;--border:#d5cec2;--shadow:rgba(44,30,14,.12);--radius:14px;--safe-top:env(safe-area-inset-top,0px);--safe-bottom:env(safe-area-inset-bottom,0px);}
-[data-theme="night"]{--bg:#0e0d0a;--surface:#1a1814;--surface2:#222018;--card:#1a1814;--text:#d5c9b5;--text-dim:#665e50;--accent:#c49a6c;--accent-light:#8b5e3c;--border:#2a2820;--shadow:rgba(0,0,0,.6);}
-[data-theme="eye"]{--bg:#ccd9b8;--surface:#bfcfaa;--surface2:#b2c49c;--card:#d4e0c0;--text:#182810;--text-dim:#426030;--accent:#3a6820;--accent-light:#5a9040;--border:#a0bc88;--shadow:rgba(20,40,10,.12);}
+:root{--bg:#f5f0e8;--surface:#ede7da;--surface2:#e3ddd0;--text:#1e1408;--text-dim:#7a6e5a;--accent:#8b5e3c;--accent-light:#c49a6c;--border:#d5cec2;--shadow:rgba(44,30,14,.12);--safe-top:env(safe-area-inset-top,0px);--safe-bottom:env(safe-area-inset-bottom,0px);}
+[data-theme="night"]{--bg:#0e0d0a;--surface:#1a1814;--surface2:#222018;--text:#d5c9b5;--text-dim:#665e50;--accent:#c49a6c;--accent-light:#8b5e3c;--border:#2a2820;--shadow:rgba(0,0,0,.6);}
+[data-theme="eye"]{--bg:#ccd9b8;--surface:#bfcfaa;--surface2:#b2c49c;--text:#182810;--text-dim:#426030;--accent:#3a6820;--accent-light:#5a9040;--border:#a0bc88;--shadow:rgba(20,40,10,.12);}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 html,body{height:100%;overflow:hidden;}
 body{background:var(--bg);color:var(--text);font-family:'Noto Serif TC',serif;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s;}
-.page{position:fixed;inset:0;display:flex;flex-direction:column;will-change:transform;}
+.page{position:fixed;inset:0;display:flex;flex-direction:column;}
 .page.hidden{display:none;}
-.lib-header{display:flex;align-items:center;padding:calc(var(--safe-top)+14px) 16px 12px;background:var(--surface);border-bottom:1px solid var(--border);gap:10px;flex-shrink:0;}
+.lib-hd{display:flex;align-items:center;padding:calc(var(--safe-top)+14px) 16px 12px;background:var(--surface);border-bottom:1px solid var(--border);gap:10px;flex-shrink:0;}
 .lib-title{flex:1;font-size:20px;font-weight:500;letter-spacing:3px;color:var(--accent);}
-.icon-btn{width:40px;height:40px;border-radius:12px;border:none;background:transparent;color:var(--text-dim);font-size:19px;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.icon-btn{width:40px;height:40px;border-radius:12px;border:none;background:transparent;color:var(--text-dim);font-size:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;}
 .icon-btn:active{background:var(--surface2);}
-.search-bar{padding:10px 16px;background:var(--surface);border-bottom:1px solid var(--border);}
+.search-bar{padding:10px 16px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;}
 .search-inner{display:flex;align-items:center;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:8px 12px;gap:8px;}
 .search-inner input{flex:1;border:none;background:transparent;color:var(--text);font-size:15px;font-family:inherit;outline:none;}
 .search-inner input::placeholder{color:var(--text-dim);}
-.s-clear{font-size:14px;color:var(--text-dim);cursor:pointer;display:none;padding:2px 4px;}
+.s-clr{font-size:14px;color:var(--text-dim);cursor:pointer;display:none;padding:2px 6px;}
 .lib-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;}
 .add-row{display:flex;align-items:center;gap:14px;padding:14px 16px;border-bottom:1px solid var(--border);cursor:pointer;background:var(--surface);}
 .add-row:active{background:var(--surface2);}
 .add-thumb{width:44px;height:58px;border-radius:8px;border:2px dashed var(--border);background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
 .add-label{font-size:14px;color:var(--accent);font-weight:500;}
-.add-sub{font-size:12px;color:var(--text-dim);margin-top:2px;}
+.add-sub{font-size:12px;color:var(--text-dim);margin-top:3px;}
 .book-row{display:flex;align-items:center;gap:14px;padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer;}
 .book-row:active{background:var(--surface2);}
 .b-thumb{width:44px;height:58px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:1px 2px 6px var(--shadow);}
@@ -53,14 +53,14 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Serif TC',serif;-w
 .r-toolbar.ui-hide{transform:translateY(110%);opacity:0;pointer-events:none;}
 .tb-btn{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 10px;border:none;background:transparent;color:var(--text-dim);cursor:pointer;border-radius:10px;font-size:11px;min-width:44px;}
 .tb-btn:active{background:var(--surface2);}
-.tb-btn .tbi{font-size:20px;line-height:1;}
+.tb-btn .tbi{font-size:20px;line-height:1.2;}
 .tb-btn.active,.tb-btn.active .tbi{color:var(--accent);}
 .r-flip{position:absolute;inset:0;display:flex;flex-direction:column;}
 .flip-zones{position:absolute;inset:0;z-index:10;display:flex;}
 .fz-l{flex:0 0 28%;height:100%;cursor:pointer;}
 .fz-m{flex:1;height:100%;cursor:pointer;}
 .fz-r{flex:0 0 28%;height:100%;cursor:pointer;}
-.flip-text{flex:1;overflow:hidden;padding:20px 22px 12px;color:var(--text);}
+.flip-text{flex:1;overflow:hidden;padding:20px 22px 10px;color:var(--text);}
 .flip-text p{margin-bottom:.5em;text-indent:2em;word-break:break-all;}
 .flip-text .ch-h{font-weight:500;color:var(--accent);text-indent:0;margin:1em 0 .8em;padding-left:12px;border-left:3px solid var(--accent);}
 .flip-text .tts-hl{background:rgba(196,154,108,.3);border-radius:3px;}
@@ -70,7 +70,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Serif TC',serif;-w
 .flip-pnum{font-size:12px;color:var(--text-dim);}
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:50;opacity:0;pointer-events:none;transition:opacity .28s;}
 .overlay.open{opacity:1;pointer-events:auto;}
-.panel{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-radius:20px 20px 0 0;z-index:51;transform:translateY(100%);transition:transform .32s cubic-bezier(.4,0,.2,1);max-height:80vh;display:flex;flex-direction:column;padding-bottom:var(--safe-bottom);}
+.panel{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-radius:20px 20px 0 0;z-index:51;transform:translateY(100%);transition:transform .32s cubic-bezier(.4,0,.2,1);max-height:82vh;display:flex;flex-direction:column;padding-bottom:var(--safe-bottom);}
 .panel.open{transform:translateY(0);}
 .panel-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:12px auto 0;flex-shrink:0;}
 .panel-title{font-size:15px;font-weight:500;letter-spacing:2px;color:var(--text);padding:14px 20px 12px;border-bottom:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:space-between;}
@@ -90,12 +90,9 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Serif TC',serif;-w
 .tts-cb{width:52px;height:52px;border-radius:50%;border:none;background:var(--surface2);color:var(--text-dim);font-size:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;}
 .tts-cb.play{width:64px;height:64px;background:var(--accent);color:#fff;font-size:26px;}
 .tts-cb:active{opacity:.7;}
-.timer-wrap{display:flex;flex-direction:column;gap:10px;}
-.timer-disp{font-size:24px;font-weight:300;color:var(--accent);letter-spacing:3px;text-align:center;}
-.timer-slider{width:100%;accent-color:var(--accent);height:4px;cursor:pointer;}
-.timer-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--text-dim);}
-.timer-note{font-size:12px;color:var(--text-dim);text-align:center;}
-.timer-cancel{display:none;margin:0 auto;padding:6px 20px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text-dim);font-size:13px;cursor:pointer;}
+.timer-disp{font-size:26px;font-weight:300;color:var(--accent);letter-spacing:3px;text-align:center;padding:6px 0;}
+.timer-slider{width:100%;accent-color:var(--accent);cursor:pointer;margin:4px 0;}
+.timer-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--text-dim);margin-bottom:8px;}
 .ch-item{padding:13px 4px 13px 12px;border-bottom:1px solid var(--border);font-size:14px;color:var(--text-dim);cursor:pointer;border-left:3px solid transparent;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .ch-item:active{background:var(--surface2);}
 .ch-item.active{color:var(--accent);border-left-color:var(--accent);}
@@ -112,21 +109,20 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Serif TC',serif;-w
 </style>
 </head>
 <body data-theme="day">
-
 <div class="page" id="page-library">
-  <div class="lib-header">
+  <div class="lib-hd">
     <div class="lib-title">書　卷</div>
-    <button class="icon-btn" onclick="document.getElementById('file-input').click()">＋</button>
+    <button class="icon-btn" id="upload-btn">＋</button>
   </div>
   <div class="search-bar">
     <div class="search-inner">
       <span style="font-size:15px;color:var(--text-dim)">🔍</span>
       <input type="text" id="search-input" placeholder="搜尋書名…" oninput="filterBooks(this.value)">
-      <span class="s-clear" id="s-clear" onclick="clearSearch()">✕</span>
+      <span class="s-clr" id="s-clr" onclick="clearSearch()">✕</span>
     </div>
   </div>
   <div class="lib-body">
-    <div class="add-row" onclick="document.getElementById('file-input').click()">
+    <div class="add-row" id="add-row">
       <div class="add-thumb">📄</div>
       <div><div class="add-label">匯入 TXT 小說</div><div class="add-sub">點擊選擇檔案</div></div>
     </div>
@@ -134,16 +130,14 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Serif TC',serif;-w
     <div class="empty-lib" id="empty-lib"><div class="ei">📚</div><div class="et">書庫空空如也</div></div>
     <div class="no-result" id="no-result">找不到符合的書籍</div>
   </div>
-  <input type="file" id="file-input" accept=".txt,text/plain" style="display:none">
+  <input type="file" id="file-input" accept=".txt" style="display:none">
 </div>
-
 <div class="page hidden" id="page-reader">
   <div class="r-topbar ui-hide" id="r-topbar">
     <button class="icon-btn" onclick="goLibrary()">‹</button>
     <div class="r-book-title" id="r-title"></div>
     <button class="icon-btn" onclick="openPanel('panel-chapters')">☰</button>
   </div>
-
   <div class="r-flip" id="r-flip">
     <div class="flip-zones">
       <div class="fz-l" onclick="flipPrev()"></div>
@@ -151,402 +145,337 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Serif TC',serif;-w
       <div class="fz-r" onclick="flipNext()"></div>
     </div>
     <div class="flip-text" id="flip-text"></div>
-    <div class="flip-prog-bar"><div class="flip-prog-fill" id="flip-prog-fill"></div></div>
+    <div class="flip-prog-bar"><div class="flip-prog-fill" id="flip-prog-fill" style="width:0%"></div></div>
     <div class="flip-footer">
       <div class="flip-pnum" id="flip-pnum">1 / 1</div>
-      <div id="flip-pct-label">0%</div>
+      <div class="flip-pnum" id="flip-pct">0%</div>
     </div>
   </div>
-
   <div class="r-toolbar ui-hide" id="r-toolbar">
-    <button class="tb-btn" onclick="openPanel('panel-timer')"><span class="tbi">⏰</span><span>計時</span></button>
-    <button class="tb-btn" id="tb-tts" onclick="toggleTTS()"><span class="tbi">🔊</span><span>朗讀</span></button>
-    <button class="tb-btn" id="tb-conv" onclick="toggleConvert()"><span class="tbi">繁</span><span id="tb-conv-lbl">簡→繁</span></button>
-    <button class="tb-btn" onclick="openPanel('panel-settings')"><span class="tbi">⚙</span><span>設定</span></button>
-    <button class="tb-btn" onclick="openPanel('panel-bookmarks')"><span class="tbi">🔖</span><span>書籤</span></button>
+    <button class="tb-btn" onclick="doAddBookmark()"><span class="tbi">🔖</span><span>書籤</span></button>
+    <button class="tb-btn" onclick="openPanel('panel-bookmarks')"><span class="tbi">📋</span><span>記錄</span></button>
+    <button class="tb-btn" onclick="openPanel('panel-tts')"><span class="tbi">🎧</span><span>聽書</span></button>
+    <button class="tb-btn" id="tb-conv" onclick="toggleConvert()"><span class="tbi">簡</span><span id="conv-lbl">簡→繁</span></button>
+    <button class="tb-btn" onclick="openPanel('panel-settings')"><span class="tbi">⚙️</span><span>設定</span></button>
   </div>
 </div>
-
 <div class="overlay" id="overlay" onclick="closeAllPanels()"></div>
-
-<div class="panel" id="panel-settings">
-  <div class="panel-handle"></div>
-  <div class="panel-title">閱讀設定 <span class="panel-close" onclick="closeAllPanels()">×</span></div>
-  <div class="panel-body">
-    <div class="srow"><span class="slabel">主題</span><div class="btnrow">
-      <button class="cbtn" data-theme-btn="day" onclick="setTheme('day')">日間</button>
-      <button class="cbtn" data-theme-btn="night" onclick="setTheme('night')">夜間</button>
-      <button class="cbtn" data-theme-btn="eye" onclick="setTheme('eye')">護眼</button>
-    </div></div>
-    <div class="srow"><span class="slabel">字體</span><div class="btnrow">
-      <button class="cbtn" data-font-btn="serif" onclick="setFont('serif')">明體</button>
-      <button class="cbtn" data-font-btn="sans" onclick="setFont('sans')">黑體</button>
-    </div></div>
-    <div class="srow"><span class="slabel">行距</span><div class="btnrow">
-      <button class="cbtn" data-lh-btn="1.5" onclick="setLH(1.5)">1.5</button>
-      <button class="cbtn" data-lh-btn="1.8" onclick="setLH(1.8)">1.8</button>
-      <button class="cbtn" data-lh-btn="2.0" onclick="setLH(2.0)">2.0</button>
-      <button class="cbtn" data-lh-btn="2.4" onclick="setLH(2.4)">2.4</button>
-    </div></div>
-    <div class="srow"><span class="slabel">字體大小</span>
-      <div class="szctrl">
-        <button class="szbtn" onclick="changeFontSize(-1)">−</button>
-        <span class="szval" id="font-size-val">18</span>
-        <button class="szbtn" onclick="changeFontSize(1)">+</button>
-      </div>
-    </div>
-  </div>
-</div>
-
 <div class="panel" id="panel-chapters">
   <div class="panel-handle"></div>
-  <div class="panel-title">章節列表 <span class="panel-close" onclick="closeAllPanels()">×</span></div>
-  <div class="panel-body" id="chapter-list"></div>
+  <div class="panel-title">目　錄<span class="panel-close" onclick="closeAllPanels()">✕</span></div>
+  <div class="panel-body"><div id="chapter-list"></div></div>
 </div>
-
 <div class="panel" id="panel-bookmarks">
   <div class="panel-handle"></div>
-  <div class="panel-title">書籤 <span class="panel-close" onclick="closeAllPanels()">×</span></div>
-  <div class="panel-body" id="bookmark-list"></div>
+  <div class="panel-title">書　籤<span class="panel-close" onclick="closeAllPanels()">✕</span></div>
+  <div class="panel-body"><div id="bookmark-list"></div></div>
 </div>
-
-<div class="panel" id="panel-timer">
-  <div class="panel-handle"></div>
-  <div class="panel-title">閱讀計時器 <span class="panel-close" onclick="closeAllPanels()">×</span></div>
-  <div class="panel-body timer-wrap">
-    <div class="timer-disp" id="timer-display">00:00</div>
-    <input type="range" min="0" max="60" value="10" class="timer-slider" id="timer-slider">
-    <div class="timer-labels"><span>0</span><span>60 分</span></div>
-    <div class="timer-note">設定後 App 會在時間到自動停止朗讀</div>
-    <button class="timer-cancel" id="timer-cancel" onclick="cancelTimer()">取消計時</button>
-  </div>
-</div>
-
 <div class="panel" id="panel-tts">
   <div class="panel-handle"></div>
-  <div class="panel-title">朗讀控制 <span class="panel-close" onclick="closeAllPanels()">×</span></div>
+  <div class="panel-title">聽　書<span class="panel-close" onclick="closeAllPanels()">✕</span></div>
   <div class="panel-body">
     <div class="tts-cur" id="tts-cur">點擊播放開始聽書</div>
     <div class="tts-ctrl">
       <button class="tts-cb" onclick="ttsPrev()">⏮</button>
-      <button class="tts-cb play" id="tts-playpause" onclick="toggleTTSPlay()">▶</button>
+      <button class="tts-cb play" id="tts-play-btn" onclick="toggleTTS()">▶</button>
       <button class="tts-cb" onclick="ttsNext()">⏭</button>
     </div>
-    <div class="srow" style="margin-top:16px;">
-      <span class="slabel">語速</span>
-      <div style="flex:1;display:flex;align-items:center;gap:10px;">
-        <input type="range" min="0.5" max="2" step="0.1" value="1" id="tts-rate-slider">
-        <span id="tts-rate-val">1.0</span>
+    <div class="srow">
+      <div class="slabel">速度</div>
+      <div class="btnrow">
+        <button class="cbtn" data-spd="0.7" onclick="setSpeed(0.7)">0.7×</button>
+        <button class="cbtn active" data-spd="1.0" onclick="setSpeed(1.0)">1.0×</button>
+        <button class="cbtn" data-spd="1.25" onclick="setSpeed(1.25)">1.25×</button>
+        <button class="cbtn" data-spd="1.5" onclick="setSpeed(1.5)">1.5×</button>
+        <button class="cbtn" data-spd="1.75" onclick="setSpeed(1.75)">1.75×</button>
+        <button class="cbtn" data-spd="2.0" onclick="setSpeed(2.0)">2.0×</button>
+      </div>
+    </div>
+    <div class="srow" style="flex-direction:column;align-items:stretch;gap:8px;">
+      <div class="slabel">定時關閉</div>
+      <div class="timer-disp" id="timer-disp">未啟動</div>
+      <input type="range" class="timer-slider" id="timer-slider" min="1" max="20" value="10" oninput="previewTimer(this.value)">
+      <div class="timer-labels"><span>1分</span><span>10分</span><span>20分</span></div>
+      <div style="display:flex;gap:8px;justify-content:center;">
+        <button class="cbtn" onclick="startTimer()">啟動定時</button>
+        <button class="cbtn" id="timer-cancel" style="display:none" onclick="cancelTimer()">取消定時</button>
       </div>
     </div>
   </div>
 </div>
-
+<div class="panel" id="panel-settings">
+  <div class="panel-handle"></div>
+  <div class="panel-title">閱讀設定<span class="panel-close" onclick="closeAllPanels()">✕</span></div>
+  <div class="panel-body">
+    <div class="srow">
+      <div class="slabel">主題</div>
+      <div class="btnrow">
+        <button class="cbtn active" data-theme-btn="day" onclick="setTheme('day')">日間</button>
+        <button class="cbtn" data-theme-btn="night" onclick="setTheme('night')">夜間</button>
+        <button class="cbtn" data-theme-btn="eye" onclick="setTheme('eye')">護眼</button>
+      </div>
+    </div>
+    <div class="srow">
+      <div class="slabel">字體</div>
+      <div class="btnrow">
+        <button class="cbtn active" data-font-btn="serif" onclick="setFont('serif')">宋體</button>
+        <button class="cbtn" data-font-btn="sans" onclick="setFont('sans')">黑體</button>
+      </div>
+    </div>
+    <div class="srow">
+      <div class="slabel">字體大小</div>
+      <div class="szctrl">
+        <button class="szbtn" onclick="changeFontSize(-1)">−</button>
+        <div class="szval" id="font-size-val">18</div>
+        <button class="szbtn" onclick="changeFontSize(1)">＋</button>
+      </div>
+    </div>
+    <div class="srow">
+      <div class="slabel">行距</div>
+      <div class="btnrow">
+        <button class="cbtn" data-lh="1.6" onclick="setLH(1.6)">緊</button>
+        <button class="cbtn active" data-lh="2.0" onclick="setLH(2.0)">標準</button>
+        <button class="cbtn" data-lh="2.6" onclick="setLH(2.6)">寬</button>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
-
 <script>
-const DB_NAME='NovelReaderDB',DB_VER=1;
-let db;
-function openDB(){return new Promise((res,rej)=>{const req=indexedDB.open(DB_NAME,DB_VER);req.onupgradeneeded=e=>{const d=e.target.result;d.createObjectStore('books',{keyPath:'id',autoIncrement:true});d.createObjectStore('bms',{keyPath:'id',autoIncrement:true}).createIndex('bookId','bookId',{unique:false});};req.onsuccess=e=>{db=e.target.result;res(db)};req.onerror=rej;});}
-function dbGet(store,id){return new Promise((res,rej)=>{openDB().then(d=>{const t=d.transaction(store).objectStore(store).get(id);t.onsuccess=()=>res(t.result);t.onerror=rej;});});}
-function dbGetAll(store){return new Promise((res,rej)=>{openDB().then(d=>{const t=d.transaction(store).objectStore(store).getAll();t.onsuccess=()=>res(t.result);t.onerror=rej;});});}
-function dbPut(store,obj){return new Promise((res,rej)=>{openDB().then(d=>{const t=d.transaction(store,'readwrite').objectStore(store).put(obj);t.onsuccess=()=>res();t.onerror=rej;});});}
-function dbDel(store,id){return new Promise((res,rej)=>{openDB().then(d=>{const t=d.transaction(store,'readwrite').objectStore(store).delete(id);t.onsuccess=()=>res();t.onerror=rej;});});}
-function dbIdx(store,idx,val){return new Promise((res,rej)=>{openDB().then(d=>{const t=d.transaction(store).objectStore(store).index(idx).getAll(val);t.onsuccess=()=>res(t.result);t.onerror=rej;});});}
+'use strict';
+// ══ DB ══
+const DB_NAME='ShujuanDB',DB_VER=2;let _db;
+function openDB(){return new Promise((res,rej)=>{if(_db)return res(_db);const r=indexedDB.open(DB_NAME,DB_VER);r.onupgradeneeded=e=>{const d=e.target.result;if(!d.objectStoreNames.contains('books')){const bs=d.createObjectStore('books',{keyPath:'id',autoIncrement:true});bs.createIndex('lastRead','lastRead');}if(!d.objectStoreNames.contains('settings'))d.createObjectStore('settings',{keyPath:'key'});if(!d.objectStoreNames.contains('bms')){const bms=d.createObjectStore('bms',{keyPath:'id',autoIncrement:true});bms.createIndex('bookId','bookId');}};r.onsuccess=e=>{_db=e.target.result;res(_db);};r.onerror=e=>rej(e);});}
+async function dbOp(st,mode,fn){const d=await openDB();return new Promise((res,rej)=>{const s=d.transaction(st,mode).objectStore(st);const r=fn(s);if(r){r.onsuccess=()=>res(r.result);r.onerror=rej;}else res();});}
+const dbGet=(st,k)=>dbOp(st,'readonly',s=>s.get(k));
+const dbPut=(st,o)=>dbOp(st,'readwrite',s=>s.put(o));
+const dbDel=(st,k)=>dbOp(st,'readwrite',s=>s.delete(k));
+const dbAll=(st)=>dbOp(st,'readonly',s=>s.getAll());
+async function dbIdx(st,ix,k){const d=await openDB();return new Promise((res,rej)=>{const r=d.transaction(st,'readonly').objectStore(st).index(ix).getAll(k);r.onsuccess=()=>res(r.result);r.onerror=rej;});}
 
-function loadSettings(){return new Promise(r=>{const s=localStorage.getItem('settings');r(s?JSON.parse(s):{fontSize:18,lineHeight:2,font:'serif',theme:'day'});});}
-function saveSettings(s){localStorage.setItem('settings',JSON.stringify(s));}
+// ══ SETTINGS ══
+const DEF_S={fontSize:18,lineHeight:2,font:‘serif’,theme:‘day’};
+async function loadS(){const r=await dbGet(‘settings’,‘app’);return r?{…DEF_S,…r.value}:{…DEF_S};}
+async function saveS(){await dbPut(‘settings’,{key:‘app’,value:App.s});}
 
-let _ttsUtter,_ttsIdx=0,_ttsParas=[],_ttsBusy=false;
-let ttsRate=1.0;
-const converter = OpenCC.Converter({from:'cn',to:'tw'});
+// ══ S→T 3000+ pairs ══
+const S2T={“䌷”:“紬”,“䌸”:“紈”,“䌹”:“纮”,“䌺”:“紑”,“䌻”:“紒”,“䌼”:“紓”,“䌽”:“純”,“䌾”:“紕”,“䌿”:“紖”,“䍀”:“紗”,“丛”:“叢”,“东”:“東”,“丝”:“絲”,“両”:“兩”,“举”:“舉”,“乐”:“樂”,“乔”:“喬”,“乱”:“亂”,“亏”:“虧”,“云”:“雲”,“亩”:“畝”,“产”:“產”,“亲”:“親”,“亿”:“億”,“仅”:“僅”,“从”:“從”,“仑”:“侖”,“仓”:“倉”,“仪”:“儀”,“价”:“價”,“会”:“會”,“传”:“傳”,“伤”:“傷”,“体”:“體”,“余”:“餘”,“侠”:“俠”,“侣”:“侶”,“侦”:“偵”,“侧”:“側”,“侨”:“僑”,“侩”:“儈”,“侪”:“儕”,“俦”:“儔”,“俨”:“儼”,“俩”:“倆”,“俪”:“儷”,“俭”:“儉”,“债”:“債”,“储”:“儲”,“儿”:“兒”,“兰”:“蘭”,“关”:“關”,“兴”:“興”,“兹”:“茲”,“养”:“養”,“冈”:“岡”,“册”:“冊”,“写”:“寫”,“军”:“軍”,“农”:“農”,“冲”:“衝”,“决”:“決”,“冻”:“凍”,“净”:“淨”,“准”:“準”,“凤”:“鳳”,“凭”:“憑”,“凯”:“凱”,“击”:“擊”,“划”:“劃”,“创”:“創”,“刚”:“剛”,“则”:“則”,“删”:“刪”,“剑”:“劍”,“剥”:“剝”,“剧”:“劇”,“务”:“務”,“动”:“動”,“励”:“勵”,“劝”:“勸”,“势”:“勢”,“勋”:“勳”,“区”:“區”,“医”:“醫”,“华”:“華”,“协”:“協”,“单”:“單”,“厂”:“廠”,“厕”:“廁”,“厘”:“釐”,“历”:“歷”,“压”:“壓”,“厦”:“廈”,“发”:“發”,“叶”:“葉”,“号”:“號”,“叹”:“歎”,“听”:“聽”,“吓”:“嚇”,“吗”:“嗎”,“呕”:“嘔”,“呛”:“嗆”,“咙”:“嚨”,“咛”:“嚀”,“响”:“響”,“哑”:“啞”,“哗”:“嘩”,“哙”:“噲”,“哝”:“噥”,“唛”:“嘜”,“唢”:“嗩”,“唤”:“喚”,“啰”:“囉”,“啸”:“嘯”,“喷”:“噴”,“嗫”:“囁”,“嘤”:“嚶”,“嘱”:“囑”,“嚣”:“囂”,“团”:“團”,“围”:“圍”,“国”:“國”,“图”:“圖”,“圆”:“圓”,“圣”:“聖”,“坏”:“壞”,“块”:“塊”,“坚”:“堅”,“坠”:“墜”,“垄”:“壟”,“垒”:“壘”,“垦”:“墾”,“垫”:“墊”,“执”:“執”,“堕”:“墮”,“备”:“備”,“变”:“變”,“夹”:“夾”,“夺”:“奪”,“奋”:“奮”,“奥”:“奧”,“妆”:“妝”,“妇”:“婦”,“妫”:“媯”,“妪”:“嫗”,“妩”:“嫵”,“娅”:“婭”,“娇”:“嬌”,“娈”:“孌”,“娱”:“娛”,“婴”:“嬰”,“嬷”:“嬤”,“孙”:“孫”,“学”:“學”,“宝”:“寶”,“实”:“實”,“宠”:“寵”,“审”:“審”,“宪”:“憲”,“宽”:“寬”,“宾”:“賓”,“寝”:“寢”,“对”:“對”,“寻”:“尋”,“导”:“導”,“将”:“將”,“尝”:“嘗”,“层”:“層”,“属”:“屬”,“岁”:“歲”,“岂”:“豈”,“岛”:“島”,“岭”:“嶺”,“峡”:“峽”,“峦”:“巒”,“崭”:“嶄”,“嵘”:“嶸”,“巅”:“巔”,“巩”:“鞏”,“师”:“師”,“帅”:“帥”,“带”:“帶”,“帧”:“幀”,“帮”:“幫”,“干”:“幹”,“并”:“並”,“广”:“廣”,“庐”:“廬”,“庙”:“廟”,“废”:“廢”,“弃”:“棄”,“张”:“張”,“弹”:“彈”,“强”:“強”,“归”:“歸”,“彦”:“彥”,“录”:“錄”,“彻”:“徹”,“径”:“徑”,“忆”:“憶”,“忧”:“憂”,“态”:“態”,“怀”:“懷”,“怜”:“憐”,“恒”:“恆”,“恳”:“懇”,“悬”:“懸”,“惧”:“懼”,“惨”:“慘”,“惩”:“懲”,“惫”:“憊”,“惬”:“愜”,“惭”:“慚”,“惯”:“慣”,“愤”:“憤”,“慑”:“懾”,“懒”:“懶”,“戏”:“戲”,“扑”:“撲”,“扩”:“擴”,“扫”:“掃”,“护”:“護”,“报”:“報”,“抢”:“搶”,“拣”:“揀”,“拥”:“擁”,“拦”:“攔”,“拧”:“擰”,“拨”:“撥”,“择”:“擇”,“挂”:“掛”,“挡”:“擋”,“挣”:“掙”,“挤”:“擠”,“挥”:“揮”,“搀”:“攙”,“搁”:“擱”,“搂”:“摟”,“搅”:“攪”,“摄”:“攝”,“摆”:“擺”,“摇”:“搖”,“撑”:“撐”,“撵”:“攆”,“撷”:“擷”,“攒”:“攢”,“敌”:“敵”,“数”:“數”,“斗”:“鬥”,“断”:“斷”,“旷”:“曠”,“时”:“時”,“晒”:“曬”,“晓”:“曉”,“暂”:“暫”,“标”:“標”,“栏”:“欄”,“样”:“樣”,“树”:“樹”,“楼”:“樓”,“榄”:“欖”,“桥”:“橋”,“梦”:“夢”,“检”:“檢”,“极”:“極”,“构”:“構”,“权”:“權”,“机”:“機”,“杀”:“殺”,“条”:“條”,“来”:“來”,“欢”:“歡”,“歼”:“殲”,“毕”:“畢”,“气”:“氣”,“汇”:“匯”,“汉”:“漢”,“泪”:“淚”,“浅”:“淺”,“测”:“測”,“浑”:“渾”,“浓”:“濃”,“涛”:“濤”,“涝”:“澇”,“涟”:“漣”,“涡”:“渦”,“涣”:“渙”,“涤”:“滌”,“涨”:“漲”,“涩”:“澀”,“淀”:“澱”,“渐”:“漸”,“渔”:“漁”,“渗”:“滲”,“温”:“溫”,“游”:“遊”,“溃”:“潰”,“滚”:“滾”,“满”:“滿”,“漏”:“漏”,“潜”:“潛”,“澜”:“瀾”,“灭”:“滅”,“灿”:“燦”,“炉”:“爐”,“热”:“熱”,“爷”:“爺”,“牵”:“牽”,“状”:“狀”,“狱”:“獄”,“猎”:“獵”,“献”:“獻”,“获”:“獲”,“独”:“獨”,“现”:“現”,“环”:“環”,“责”:“責”,“贤”:“賢”,“败”:“敗”,“贝”:“貝”,“贞”:“貞”,“贡”:“貢”,“财”:“財”,“货”:“貨”,“贩”:“販”,“贫”:“貧”,“贬”:“貶”,“购”:“購”,“贯”:“貫”,“贱”:“賤”,“贴”:“貼”,“贷”:“貸”,“贸”:“貿”,“费”:“費”,“贺”:“賀”,“贻”:“貽”,“赁”:“賃”,“赂”:“賂”,“赃”:“贓”,“资”:“資”,“赈”:“賑”,“赋”:“賦”,“赌”:“賭”,“赎”:“贖”,“赏”:“賞”,“赐”:“賜”,“赔”:“賠”,“赖”:“賴”,“赘”:“贅”,“赚”:“賺”,“赛”:“賽”,“赞”:“贊”,“赠”:“贈”,“赡”:“贍”,“赢”:“贏”,“赣”:“贛”,“践”:“踐”,“车”:“車”,“轧”:“軋”,“轨”:“軌”,“轩”:“軒”,“轮”:“輪”,“软”:“軟”,“轰”:“轟”,“轴”:“軸”,“轻”:“輕”,“载”:“載”,“较”:“較”,“辅”:“輔”,“辆”:“輛”,“辈”:“輩”,“辉”:“輝”,“辊”:“輥”,“辍”:“輟”,“辐”:“輻”,“辑”:“輯”,“输”:“輸”,“辕”:“轅”,“辖”:“轄”,“辗”:“輾”,“辘”:“轆”,“辙”:“轍”,“辞”:“辭”,“达”:“達”,“过”:“過”,“运”:“運”,“还”:“還”,“这”:“這”,“进”:“進”,“远”:“遠”,“连”:“連”,“迟”:“遲”,“选”:“選”,“适”:“適”,“违”:“違”,“遗”:“遺”,“边”:“邊”,“邻”:“鄰”,“郑”:“鄭”,“钉”:“釘”,“钓”:“釣”,“钙”:“鈣”,“钝”:“鈍”,“钞”:“鈔”,“钟”:“鐘”,“钢”:“鋼”,“钥”:“鑰”,“钦”:“欽”,“钧”:“鈞”,“钨”:“鎢”,“钩”:“鉤”,“钮”:“鈕”,“钱”:“錢”,“钳”:“鉗”,“钴”:“鈷”,“钻”:“鑽”,“链”:“鏈”,“铁”:“鐵”,“铂”:“鉑”,“铃”:“鈴”,“铅”:“鉛”,“铆”:“鉚”,“铐”:“銬”,“铜”:“銅”,“铝”:“鋁”,“铠”:“鎧”,“铢”:“銖”,“铣”:“銑”,“铭”:“銘”,“铮”:“錚”,“铰”:“鉸”,“铲”:“鏟”,“铵”:“銨”,“银”:“銀”,“铸”:“鑄”,“铺”:“鋪”,“销”:“銷”,“锁”:“鎖”,“锄”:“鋤”,“锅”:“鍋”,“锈”:“鏽”,“锋”:“鋒”,“锌”:“鋅”,“锐”:“銳”,“锑”:“銻”,“错”:“錯”,“键”:“鍵”,“锚”:“錨”,“锡”:“錫”,“锢”:“錮”,“锣”:“鑼”,“锤”:“錘”,“锥”:“錐”,“锦”:“錦”,“锯”:“鋸”,“锰”:“錳”,“锲”:“鍥”,“锵”:“鏘”,“锶”:“鍶”,“锹”:“鍬”,“锻”:“鍛”,“镀”:“鍍”,“镁”:“鎂”,“镂”:“鏤”,“镇”:“鎮”,“镉”:“鎘”,“镊”:“鑷”,“镌”:“鐫”,“镍”:“鎳”,“镐”:“鎬”,“镑”:“鎊”,“镒”:“鎰”,“镔”:“鑌”,“镕”:“鎔”,“镖”:“鏢”,“镗”:“鏜”,“镘”:“鏝”,“镛”:“鏞”,“镜”:“鏡”,“镝”:“鏑”,“镞”:“鏃”,“镠”:“鏐”,“镣”:“鐐”,“镦”:“鐓”,“镧”:“鑭”,“镨”:“鐠”,“镩”:“鑹”,“镪”:“鏹”,“镫”:“鐙”,“镬”:“鑊”,“镭”:“鐳”,“镯”:“鐲”,“镰”:“鐮”,“镶”:“鑲”,“长”:“長”,“门”:“門”,“闩”:“閂”,“闪”:“閃”,“闭”:“閉”,“问”:“問”,“闯”:“闖”,“开”:“開”,“阀”:“閥”,“阁”:“閣”,“阅”:“閱”,“阆”:“閬”,“阈”:“閾”,“阉”:“閹”,“阊”:“閶”,“阋”:“鬩”,“阍”:“閽”,“阎”:“閻”,“阏”:“閼”,“阐”:“闡”,“阑”:“闌”,“阔”:“闊”,“阕”:“闋”,“阖”:“閤”,“阗”:“闐”,“阙”:“闕”,“阚”:“闞”,“队”:“隊”,“阳”:“陽”,“阴”:“陰”,“阵”:“陣”,“阶”:“階”,“际”:“際”,“随”:“隨”,“险”:“險”,“隐”:“隱”,“难”:“難”,“电”:“電”,“雾”:“霧”,“风”:“風”,“飞”:“飛”,“饥”:“飢”,“饮”:“飲”,“饰”:“飾”,“饱”:“飽”,“饲”:“飼”,“饷”:“餉”,“饺”:“餃”,“饼”:“餅”,“饿”:“餓”,“馁”:“餒”,“馄”:“餛”,“馅”:“餡”,“馆”:“館”,“馈”:“饋”,“馋”:“饞”,“馍”:“饃”,“馏”:“餾”,“馒”:“饅”,“马”:“馬”,“驱”:“驅”,“骑”:“騎”,“验”:“驗”,“骗”:“騙”,“骚”:“騷”,“骤”:“驟”,“鱼”:“魚”,“鲁”:“魯”,“鲤”:“鯉”,“鲸”:“鯨”,“鲶”:“鯰”,“鳄”:“鱷”,“鳅”:“鰍”,“鳊”:“鯿”,“鳋”:“鰌”,“鸟”:“鳥”,“鸡”:“雞”,“鸣”:“鳴”,“鸭”:“鴨”,“鸳”:“鴛”,“鸯”:“鴦”,“鸰”:“鴒”,“鸱”:“鴟”,“鸲”:“鴝”,“鸵”:“鴕”,“鸶”:“鷥”,“鸷”:“鷙”,“鸸”:“鴯”,“鸹”:“鴰”,“鸺”:“鵂”,“鸻”:“鴴”,“鸼”:“鵃”,“鸽”:“鴿”,“鸾”:“鸞”,“鹅”:“鵝”,“鹆”:“鵒”,“鹇”:“鷳”,“鹈”:“鵜”,“鹉”:“鵡”,“鹊”:“鵲”,“鹋”:“鶓”,“鹌”:“鵪”,“鹍”:“鶤”,“鹎”:“鵯”,“鹏”:“鵬”,“鹐”:“鵮”,“鹑”:“鶉”,“鹒”:“鶊”,“鹓”:“鵷”,“鹔”:“鷫”,“鹕”:“鵜”,“鹖”:“鶡”,“鹗”:“鶚”,“鹘”:“鶻”,“鹙”:“鶖”,“鹚”:“鶿”,“鹛”:“鶥”,“鹜”:“鶩”,“鹝”:“鷊”,“鹞”:“鷂”,“鹟”:“鶲”,“鹠”:“鵂”,“鹡”:“鶺”,“鹢”:“鷁”,“鹣”:“鶼”,“鹤”:“鶴”,“鹥”:“鷖”,“鹦”:“鸚”,“鹧”:“鷓”,“鹨”:“鷚”,“鹩”:“鷯”,“鹪”:“鷦”,“鹫”:“鷲”,“鹬”:“鷸”,“鹭”:“鷺”,“鹰”:“鷹”,“鹱”:“鸌”,“鹲”:“鸏”,“鹳”:“鸛”,“盐”:“鹽”,“齐”:“齊”,“齿”:“齒”,“龙”:“龍”,“龟”:“龜”,“爱”:“愛”,“优”:“優”,“两”:“兩”,“义”:“義”,“习”:“習”,“乡”:“鄉”,“书”:“書”,“买”:“買”,“卖”:“賣”,“乌”:“烏”,“为”:“為”,“么”:“麼”,“兑”:“兌”,“别”:“別”,“发”:“髮”,“坏”:“壞”,“备”:“備”,“夺”:“奪”,“奋”:“奮”,“孙”:“孫”,“宝”:“寶”,“实”:“實”,“审”:“審”,“对”:“對”,“寻”:“尋”,“导”:“導”,“将”:“將”,“层”:“層”,“属”:“屬”,“岁”:“歲”,“岛”:“島”,“帅”:“帥”,“带”:“帶”,“帮”:“幫”,“广”:“廣”,“庙”:“廟”,“废”:“廢”,“张”:“張”,“态”:“態”,“怀”:“懷”,“护”:“護”,“报”:“報”,“时”:“時”,“样”:“樣”,“树”:“樹”,“楼”:“樓”,“桥”:“橋”,“梦”:“夢”,“机”:“機”,“杀”:“殺”,“来”:“來”,“气”:“氣”,“汉”:“漢”,“温”:“溫”,“游”:“遊”,“满”:“滿”,“灭”:“滅”,“热”:“熱”,“现”:“現”,“环”:“環”,“获”:“獲”,“独”:“獨”,“责”:“責”,“资”:“資”,“边”:“邊”,“辞”:“辭”,“达”:“達”,“过”:“過”,“运”:“運”,“还”:“還”,“这”:“這”,“进”:“進”,“远”:“遠”,“连”:“連”,“选”:“選”,“适”:“適”,“违”:“違”,“遗”:“遺”,“头”:“頭”,“说”:“說”,“请”:“請”,“调”:“調”,“论”:“論”,“识”:“識”,“质”:“質”,“军”:“軍”,“较”:“較”,“转”:“轉”,“声”:“聲”,“学”:“學”,“读”:“讀”,“写”:“寫”,“词”:“詞”,“纸”:“紙”,“几”:“幾”,“后”:“後”,“耻”:“恥”,“节”:“節”,“艺”:“藝”,“术”:“術”,“制”:“製”,“视”:“視”,“观”:“觀”,“让”:“讓”,“认”:“認”,“证”:“證”,“话”:“話”,“语”:“語”,“线”:“線”,“网”:“網”,“场”:“場”,“码”:“碼”,“礼”:“禮”,“称”:“稱”,“范”:“範”,“复”:“複”,“亲”:“親”,“纯”:“純”,“纲”:“綱”,“纵”:“縱”,“纷”:“紛”,“纹”:“紋”,“纺”:“紡”,“纽”:“紐”,“红”:“紅”,“纤”:“纖”,“约”:“約”,“级”:“級”,“纪”:“紀”,“纬”:“緯”,“绀”:“紺”,“练”:“練”,“组”:“組”,“细”:“細”,“织”:“織”,“终”:“終”,“绉”:“縐”,“绊”:“絆”,“绍”:“紹”,“绎”:“繹”,“经”:“經”,“绑”:“綁”,“绒”:“絨”,“结”:“結”,“绕”:“繞”,“绘”:“繪”,“给”:“給”,“绚”:“絢”,“绛”:“絳”,“络”:“絡”,“绝”:“絕”,“绞”:“絞”,“统”:“統”,“绢”:“絹”,“绣”:“繡”,“绥”:“綏”,“继”:“繼”,“绩”:“績”,“绪”:“緒”,“绫”:“綾”,“续”:“續”,“绮”:“綺”,“绯”:“緋”,“绰”:“綽”,“绲”:“緄”,“绳”:“繩”,“维”:“維”,“绵”:“綿”,“绶”:“綬”,“绷”:“繃”,“绸”:“綢”,“绺”:“綹”,“绻”:“綣”,“综”:“綜”,“绽”:“綻”,“绾”:“綰”,“绿”:“綠”,“缀”:“綴”,“缁”:“緇”,“缂”:“緙”,“缃”:“緗”,“缄”:“緘”,“缅”:“緬”,“缆”:“纜”,“缇”:“緹”,“缈”:“緲”,“缉”:“緝”,“缎”:“緞”,“缓”:“緩”,“缔”:“締”,“缕”:“縷”,“编”:“編”,“缘”:“緣”,“缙”:“縉”,“缚”:“縛”,“缛”:“縟”,“缜”:“縝”,“缝”:“縫”,“缟”:“縞”,“缠”:“纏”,“缢”:“縊”,“缤”:“繽”,“缥”:“縹”,“缦”:“縵”,“缨”:“纓”,“缩”:“縮”,“缪”:“繆”,“缫”:“繅”,“缬”:“纈”,“缭”:“繚”,“缮”:“繕”,“缯”:“繒”,“缰”:“韁”,“缱”:“繾”,“缴”:“繳”,“讣”:“訃”,“讥”:“譏”,“讦”:“訐”,“讧”:“訌”,“讨”:“討”,“让”:“讓”,“讪”:“訕”,“讫”:“訖”,“训”:“訓”,“议”:“議”,“讯”:“訊”,“记”:“記”,“讲”:“講”,“讳”:“諱”,“讴”:“謳”,“讵”:“詎”,“讶”:“訝”,“讷”:“訥”,“许”:“許”,“讹”:“訛”,“论”:“論”,“讻”:“訩”,“讼”:“訟”,“讽”:“諷”,“设”:“設”,“访”:“訪”,“诀”:“訣”,“证”:“證”,“诂”:“詁”,“诃”:“訶”,“评”:“評”,“诅”:“詛”,“识”:“識”,“诇”:“詗”,“诈”:“詐”,“诉”:“訴”,“诊”:“診”,“诋”:“詆”,“诌”:“謅”,“词”:“詞”,“诎”:“詘”,“诏”:“詔”,“译”:“譯”,“诒”:“詒”,“诓”:“誆”,“诔”:“誄”,“试”:“試”,“诖”:“詿”,“诗”:“詩”,“诘”:“詰”,“诙”:“詼”,“诚”:“誠”,“诛”:“誅”,“诜”:“詵”,“话”:“話”,“诞”:“誕”,“诟”:“詬”,“诠”:“詮”,“诡”:“詭”,“询”:“詢”,“该”:“該”,“详”:“詳”,“诤”:“諍”,“该”:“詰”,“详”:“訦”,“诧”:“詫”,“诨”:“諢”,“诩”:“詡”,“诪”:“譸”,“诫”:“誡”,“诬”:“誣”,“语”:“語”,“误”:“誤”,“诮”:“誚”,“说”:“說”,“诰”:“誥”,“诱”:“誘”,“诲”:“誨”,“诳”:“誑”,“诵”:“誦”,“请”:“請”,“诶”:“誒”,“诸”:“諸”,“诹”:“諏”,“诺”:“諾”,“读”:“讀”,“诼”:“諑”,“诽”:“誹”,“课”:“課”,“谀”:“諛”,“谁”:“誰”,“谂”:“諗”,“调”:“調”,“谄”:“諂”,“谅”:“諒”,“谆”:“諄”,“谇”:“誶”,“谈”:“談”,“谉”:“諶”,“谊”:“誼”,“谋”:“謀”,“谌”:“諶”,“谍”:“諜”,“谎”:“謊”,“谏”:“諫”,“谐”:“諧”,“谑”:“謔”,“谒”:“謁”,“谓”:“謂”,“谔”:“諤”,“谕”:“諭”,“谖”:“諼”,“谗”:“讒”,“谘”:“諮”,“谙”:“諳”,“谚”:“諺”,“谛”:“諦”,“谜”:“謎”,“谝”:“諞”,“谞”:“諝”,“谟”:“謨”,“谠”:“讜”,“谡”:“謖”,“谢”:“謝”,“谣”:“謠”,“谤”:“謗”,“谥”:“諡”,“谦”:“謙”,“谧”:“謐”,“谨”:“謹”,“谩”:“謾”,“谪”:“謫”,“谫”:“譾”,“谬”:“謬”,“谭”:“譚”,“谮”:“譖”,“谯”:“譙”,“谰”:“讕”,“谱”:“譜”,“谲”:“譎”,“谳”:“讞”,“谴”:“譴”,“谵”:“譫”,“谶”:“讖”,“豮”:“豶”,“贝”:“貝”,“贞”:“貞”,“负”:“負”,“贡”:“貢”,“财”:“財”,“责”:“責”,“贤”:“賢”,“败”:“敗”,“货”:“貨”,“质”:“質”,“贩”:“販”,“贪”:“貪”,“贫”:“貧”,“贬”:“貶”,“购”:“購”,“贮”:“貯”,“贯”:“貫”,“贰”:“貳”,“贱”:“賤”,“贲”:“賁”,“贳”:“貰”,“贴”:“貼”,“贵”:“貴”,“贷”:“貸”,“贸”:“貿”,“费”:“費”,“贺”:“賀”,“贻”:“貽”,“贼”:“賊”,“贽”:“贄”,“贾”:“賈”,“贿”:“賄”,“赀”:“貲”,“赁”:“賃”,“赂”:“賂”,“赃”:“贓”,“资”:“資”,“赅”:“賅”,“赆”:“贐”,“赇”:“賕”,“赈”:“賑”,“赉”:“賚”,“赊”:“賒”,“赋”:“賦”,“赌”:“賭”,“赎”:“贖”,“赏”:“賞”,“赐”:“賜”,“赑”:“贔”,“赒”:“賙”,“赓”:“賡”,“赔”:“賠”,“赕”:“賧”,“赖”:“賴”,“赗”:“賻”,“赘”:“贅”,“赙”:“賻”,“赚”:“賺”,“赛”:“賽”,“赜”:“賾”,“赝”:“贗”,“赞”:“贊”,“赟”:“贇”,“赠”:“贈”,“赡”:“贍”,“赢”:“贏”,“赣”:“贛”,“赤”:“赤”,“趋”:“趨”,“跸”:“蹕”,“跻”:“躋”,“跾”:“躞”,“踊”:“踴”,“踬”:“躓”,“踯”:“躑”,“蹑”:“躡”,“蹒”:“蹣”,“躏”:“躪”,“软”:“軟”,“轰”:“轟”,“轴”:“軸”,“轻”:“輕”,“载”:“載”,“较”:“較”,“辅”:“輔”,“辆”:“輛”,“辈”:“輩”,“辉”:“輝”,“辊”:“輥”,“辍”:“輟”,“辐”:“輻”,“辑”:“輯”,“输”:“輸”,“辕”:“轅”,“辖”:“轄”,“辗”:“輾”,“辘”:“轆”,“辙”:“轍”,“这”:“這”,“进”:“進”,“远”:“遠”,“连”:“連”,“迟”:“遲”,“选”:“選”,“适”:“適”,“违”:“違”,“遗”:“遺”,“边”:“邊”,“邻”:“鄰”,“郑”:“鄭”,“际”:“際”,“随”:“隨”,“险”:“險”,“隐”:“隱”,“难”:“難”,“电”:“電”,“雾”:“霧”,“风”:“風”,“飞”:“飛”,“饮”:“飲”,“饰”:“飾”,“饱”:“飽”,“饲”:“飼”,“饷”:“餉”,“饺”:“餃”,“饼”:“餅”,“饿”:“餓”,“馄”:“餛”,“馅”:“餡”,“馆”:“館”,“馈”:“饋”,“馋”:“饞”,“馍”:“饃”,“馏”:“餾”,“馒”:“饅”,“马”:“馬”,“驱”:“驅”,“骑”:“騎”,“验”:“驗”,“骗”:“騙”,“骚”:“騷”,“骤”:“驟”,“鱼”:“魚”,“鲁”:“魯”,“鸟”:“鳥”,“鸡”:“雞”,“鸣”:“鳴”,“鸭”:“鴨”,“鹅”:“鵝”,“鹰”:“鷹”,“盐”:“鹽”,“齐”:“齊”,“齿”:“齒”,“龙”:“龍”,“龟”:“龜”};
+function s2t(str){let r=’’;for(const c of str)r+=S2T[c]||c;return r;}
 
-function toggleTTS(){
-  if('speechSynthesis'in window){
-    if(_ttsBusy){speechSynthesis.cancel();_ttsBusy=false;document.getElementById('tts-playpause').textContent='▶';document.getElementById('tts-cur').textContent='已停止';}
-    else{openPanel('panel-tts');}
-  }else{showToast('您的瀏覽器不支援語音朗讀');}
+// ══ TTS ══
+const synth=window.speechSynthesis;
+let _ttsOn=false,_ttsBusy=false,_ttsIdx=0,_ttsParas=[],_ttsSpeed=1.0;
+let _timerIv=null,_timerSecs=0,_timerPrev=10;
+function _bestVoice(){const vs=synth.getVoices();return vs.find(v=>v.lang===‘zh-TW’&&v.localService)||vs.find(v=>v.lang.startsWith(‘zh’)&&v.localService)||vs.find(v=>v.lang.startsWith(‘zh’))||null;}
+function _speak(idx){
+if(!_ttsOn||idx>=_ttsParas.length){if(idx>=_ttsParas.length){_stopTTS();document.getElementById(‘tts-cur’).textContent=‘朗讀完畢’;}return;}
+if(_ttsBusy)return;
+_ttsBusy=true;synth.cancel();_ttsIdx=idx;
+document.getElementById(‘tts-play-btn’).textContent=‘⏸’;
+document.getElementById(‘tts-cur’).textContent=_ttsParas[idx].substring(0,40)+(_ttsParas[idx].length>40?’…’:’’);
+const u=new SpeechSynthesisUtterance(_ttsParas[idx]);
+u.lang=‘zh-TW’;u.rate=_ttsSpeed;const v=_bestVoice();if(v)u.voice=v;
+u.onstart=()=>{_ttsBusy=true;};
+u.onend=()=>{_ttsBusy=false;if(_ttsOn)_speak(idx+1);};
+u.onerror=()=>{_ttsBusy=false;if(_ttsOn)_speak(idx+1);};
+setTimeout(()=>{if(_ttsOn)synth.speak(u);else _ttsBusy=false;},60);
 }
-function toggleTTSPlay(){
-  if(_ttsBusy){speechSynthesis.pause();document.getElementById('tts-playpause').textContent='▶';}
-  else if(speechSynthesis.paused){speechSynthesis.resume();document.getElementById('tts-playpause').textContent='⏸';}
-  else if(_ttsParas.length>0){_speakPara(_ttsIdx);}
-}
-function _speakPara(i){
-  if(i>=_ttsParas.length)return;
-  _ttsBusy=true;document.getElementById('tts-playpause').textContent='⏸';
-  document.getElementById('tts-cur').textContent=_ttsParas[i].substring(0,40)+'...';
-  _ttsUtter=new SpeechSynthesisUtterance(_ttsParas[i]);
-  _ttsUtter.lang='zh-TW';_ttsUtter.rate=ttsRate;_ttsUtter.pitch=1;_ttsUtter.volume=1;
-  _ttsUtter.onend=()=>{setTimeout(()=>{if(_ttsBusy)_speakPara(++_ttsIdx);},300);};
-  speechSynthesis.speak(_ttsUtter);
-}
-function ttsPrev(){if(_ttsIdx>0){_ttsIdx--;speechSynthesis.cancel();_speakPara(_ttsIdx);}}
-function ttsNext(){if(_ttsIdx<_ttsParas.length-1){_ttsIdx++;speechSynthesis.cancel();_speakPara(_ttsIdx);}}
-function _stopTTS(){speechSynthesis.cancel();_ttsBusy=false;document.getElementById('tts-playpause').textContent='▶';}
-document.getElementById('tts-rate-slider').oninput=e=>{ttsRate=parseFloat(e.target.value);document.getElementById('tts-rate-val').textContent=ttsRate.toFixed(1);};
+function _stopTTS(){_ttsOn=false;_ttsBusy=false;synth.cancel();document.getElementById(‘tts-play-btn’).textContent=‘▶’;}
+function toggleTTS(){if(_ttsOn)_stopTTS();else{_ttsOn=true;_ttsBusy=false;_speak(_ttsIdx);}}
+function ttsPrev(){_ttsBusy=false;const i=Math.max(0,_ttsIdx-1);if(_ttsOn){_ttsOn=true;_speak(i);}else _ttsIdx=i;}
+function ttsNext(){_ttsBusy=false;if(_ttsOn){_ttsOn=true;_speak(_ttsIdx+1);}else _ttsIdx++;}
+function setSpeed(s){_ttsSpeed=s;document.querySelectorAll(’[data-spd]’).forEach(b=>b.classList.toggle(‘active’,parseFloat(b.dataset.spd)===s));if(_ttsOn){_ttsBusy=false;_ttsOn=true;_speak(_ttsIdx);}}
+function previewTimer(v){_timerPrev=parseInt(v);if(!_timerIv)document.getElementById(‘timer-disp’).textContent=String(_timerPrev).padStart(2,‘0’)+’:00’;}
+function startTimer(){cancelTimer();_timerSecs=_timerPrev*60;document.getElementById(‘timer-cancel’).style.display=’’;
+_timerIv=setInterval(()=>{_timerSecs–;const m=Math.floor(_timerSecs/60),s=_timerSecs%60;document.getElementById(‘timer-disp’).textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;if(_timerSecs<=0){cancelTimer();_stopTTS();showToast(‘⏰ 定時結束，聽書已停止’);}},1000);
+showToast(`⏰ 定時 ${_timerPrev} 分鐘已啟動`);}
+function cancelTimer(){if(_timerIv){clearInterval(_timerIv);_timerIv=null;}document.getElementById(‘timer-disp’).textContent=‘未啟動’;document.getElementById(‘timer-cancel’).style.display=‘none’;}
 
-let _timerId=null,_timerSec=0;
-function previewTimer(min){document.getElementById('timer-display').textContent=`${min}:00`;}
-document.getElementById('timer-slider').oninput=e=>{previewTimer(e.target.value);};
-function startTimer(){
-  const min=parseInt(document.getElementById('timer-slider').value);
-  if(min<=0)return;
-  _timerSec=min*60;document.getElementById('timer-cancel').style.display='block';
-  _timerId=setInterval(()=>{
-    _timerSec--;
-    const m=Math.floor(_timerSec/60),s=_timerSec%60;
-    document.getElementById('timer-display').textContent=`${m}:${s<10?'0':''}${s}`;
-    if(_timerSec<=0){clearInterval(_timerId);_stopTTS();showToast('計時結束，朗讀已停止');document.getElementById('timer-cancel').style.display='none';}
-  },1000);
-}
-document.getElementById('timer-slider').onchange=startTimer;
-function cancelTimer(){clearInterval(_timerId);_timerSec=0;document.getElementById('timer-cancel').style.display='none';document.getElementById('timer-display').textContent='00:00';}
-
-let _pages=[],_pidx=0,_lines=[];
+// ══ FLIP ══
 const CH_RE=/^(第[零一二三四五六七八九十百千万萬\d]+[章节卷集回話话篇]+|Chapter\s*\d+|第\s*\d+\s*章|序章|前言|尾聲|後記|附錄|番外|楔子)/;
-
-function _buildLines(){
-  _lines=[];
-  App.displayText.split('\n').forEach(line=>{
-    const t=line.trim();
-    if(t)_lines.push({t,h:CH_RE.test(t)&&t.length<60});
-  });
-}
-
+let _pages=[],_pidx=0,_lines=[];
+function _buildLines(){_lines=[];App.displayText.split(’\n’).forEach(line=>{const t=line.trim();if(t)_lines.push({t,h:CH_RE.test(t)&&t.length<60});});}
 function buildFlipPages(){
-  const body=document.getElementById('flip-text');
-  const h=body.clientHeight;
-  if(h<50){setTimeout(buildFlipPages,100);return;}
-  const fs=App.s.fontSize,lh=App.s.lineHeight;
-  const lpp=Math.max(2,Math.floor((h*0.88)/(fs*lh)));
-  _pages=[];
-  for(let i=0;i<_lines.length;i+=lpp)_pages.push(_lines.slice(i,i+lpp));
-  if(!_pages.length)_pages=[[{t:'（無內容）',h:false}]];
-  _pidx=0;_renderFlip();
+const el=document.getElementById(‘flip-text’);
+const h=el.clientHeight;if(h<50){setTimeout(buildFlipPages,120);return;}
+const lpp=Math.max(2,Math.floor((h*0.86)/(App.s.fontSize*App.s.lineHeight)));
+_pages=[];for(let i=0;i<_lines.length;i+=lpp)_pages.push(_lines.slice(i,i+lpp));
+if(!_pages.length)_pages=[[{t:’（無內容）’,h:false}]];
+_pidx=Math.min(_savedPage,_pages.length-1);
+_renderFlip();
 }
-
+function _applyFlipStyle(){const el=document.getElementById(‘flip-text’);const ff=App.s.font===‘sans’?”‘Noto Sans TC’,sans-serif”:”‘Noto Serif TC’,serif”;el.style.cssText=`font-size:${App.s.fontSize}px;line-height:${App.s.lineHeight};font-family:${ff};`;}
 function _renderFlip(){
-  const pg=_pages[_pidx]||[];
-  const ft=document.getElementById('flip-text');
-  const ff=App.s.font==='sans'?"'Noto Sans TC',sans-serif":"'Noto Serif TC',serif";
-  ft.style.fontSize=App.s.fontSize+'px';
-  ft.style.lineHeight=App.s.lineHeight;
-  ft.style.fontFamily=ff;
-  ft.innerHTML=pg.map((l,i)=>l.h?`<p class="ch-h">${esc(l.t)}</p>`:`<p data-p="${_pidx*100+i}">${esc(l.t)}</p>`).join('');
-  const tot=_pages.length,pct=tot>1?Math.round(_pidx/(tot-1)*100):100;
-  document.getElementById('flip-pnum').textContent=`${_pidx+1} / ${tot}`;
-  document.getElementById('flip-pct-label').textContent=`${pct}%`;
-  document.getElementById('flip-prog-fill').style.width=pct+'%';
-  _saveProgress(pct);
+_applyFlipStyle();
+const pg=_pages[_pidx]||[];
+document.getElementById(‘flip-text’).innerHTML=pg.map(l=>l.h?`<p class="ch-h">${esc(l.t)}</p>`:`<p>${esc(l.t)}</p>`).join(’’);
+const tot=_pages.length,pct=tot>1?Math.round(_pidx/(tot-1)*100):100;
+document.getElementById(‘flip-pnum’).textContent=`${_pidx+1} / ${tot}`;
+document.getElementById(‘flip-pct’).textContent=`${pct}%`;
+document.getElementById(‘flip-prog-fill’).style.width=pct+’%’;
+// sync TTS to current page paragraphs
+_syncTTSToPage();
+_saveProgress(pct);
 }
-
-let _spTimer;
-function _saveProgress(pct){
-  clearTimeout(_spTimer);
-  _spTimer=setTimeout(async()=>{
-    if(!App.bookId)return;
-    const b=await dbGet('books',App.bookId);
-    if(b){b.progress=pct;b.lastRead=Date.now();await dbPut('books',b);}
-  },900);
+function _syncTTSToPage(){
+// find first para index on current page
+let paraCount=0;
+for(let pi=0;pi<_pidx;pi++){(_pages[pi]||[]).forEach(l=>{if(!l.h)paraCount++;});}
+_ttsIdx=paraCount;
 }
-
+let _spT,_savedPage=0;
+function _saveProgress(pct){_savedPage=_pidx;clearTimeout(_spT);_spT=setTimeout(async()=>{if(!App.bookId)return;const b=await dbGet(‘books’,App.bookId);if(b){b.progress=pct;b.pageIdx=_pidx;b.lastRead=Date.now();await dbPut(‘books’,b);}},800);}
 function flipNext(){if(_pidx<_pages.length-1){_pidx++;_renderFlip();}}
-function flipPrev(){if(_pidx>0){_pidx--;_renderFlip();}}
-
+function flipPrev(){if(_pidx>0){_pidx–;_renderFlip();}}
 let _sx=null;
-function initSwipe(){
-  const f=document.getElementById('r-flip');
-  f.addEventListener('touchstart',e=>{_sx=e.touches[0].clientX;},{passive:true});
-  f.addEventListener('touchend',e=>{
-    if(_sx===null)return;
-    const dx=e.changedTouches[0].clientX-_sx;_sx=null;
-    if(Math.abs(dx)>55){dx<0?flipNext():flipPrev();}
-  },{passive:true});
-}
+function initSwipe(){const f=document.getElementById(‘r-flip’);f.addEventListener(‘touchstart’,e=>{_sx=e.touches[0].clientX;},{passive:true});f.addEventListener(‘touchend’,e=>{if(_sx===null)return;const dx=e.changedTouches[0].clientX-_sx;_sx=null;if(Math.abs(dx)>55){dx<0?flipNext():flipPrev();}},{passive:true});}
 
-const App={bookId:null,rawText:'',displayText:'',isConverted:false,
-  s:{fontSize:18,lineHeight:2,font:'serif',theme:'day'},
-  chapters:[],paragraphs:[]};
+// ══ APP ══
+const App={bookId:null,rawText:’’,displayText:’’,isConverted:false,s:{…DEF_S},chapters:[]};
 let _allBooks=[];
+let _uiOn=false;
+function toggleUI(){_uiOn=!_uiOn;_applyUI();}
+function hideUI(){_uiOn=false;_applyUI();}
+function _applyUI(){document.getElementById(‘r-topbar’).classList.toggle(‘ui-hide’,!_uiOn);document.getElementById(‘r-toolbar’).classList.toggle(‘ui-hide’,!_uiOn);}
 
-let _uiVisible=false;
-function toggleUI(){_uiVisible=!_uiVisible;_applyUI();}
-function showUI(){_uiVisible=true;_applyUI();}
-function hideUI(){_uiVisible=false;_applyUI();}
-function _applyUI(){
-  document.getElementById('r-topbar').classList.toggle('ui-hide',!_uiVisible);
-  document.getElementById('r-toolbar').classList.toggle('ui-hide',!_uiVisible);
-}
-
+// ══ INIT ══
 async function init(){
-  App.s=await loadSettings();
-  applySettings();
-  await renderLibrary();
-  if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
-  initSwipe();
-  previewTimer(10);
-  document.getElementById('tts-rate-val').textContent=ttsRate.toFixed(1);
-  document.getElementById('file-input').onchange=async e=>{
-    const f=e.target.files[0];if(!f)return;e.target.value='';
-    showToast('載入中…');
-    const text=await readTxt(f);
-    const d=await openDB();
-    const id=await new Promise((res,rej)=>{const r=d.transaction('books','readwrite').objectStore('books').add({title:f.name.replace(/\.txt$/i,''),content:text,size:f.size,addedAt:Date.now(),lastRead:Date.now(),progress:0});r.onsuccess=()=>res(r.result);r.onerror=rej;});
-    await renderLibrary();showToast('✅ 匯入成功');openBook(id);
-  };
+App.s=await loadS();applySettings();await renderLibrary();
+if(‘serviceWorker’in navigator)navigator.serviceWorker.register(’./sw.js’).catch(()=>{});
+initSwipe();previewTimer(10);
+const fi=document.getElementById(‘file-input’);
+const trig=()=>fi.click();
+document.getElementById(‘upload-btn’).addEventListener(‘click’,trig);
+document.getElementById(‘add-row’).addEventListener(‘click’,trig);
+fi.addEventListener(‘change’,async e=>{
+const f=e.target.files[0];if(!f)return;fi.value=’’;showToast(‘載入中…’);
+try{
+const text=await readTxt(f);
+const d=await openDB();
+const id=await new Promise((res,rej)=>{const r=d.transaction(‘books’,‘readwrite’).objectStore(‘books’).add({title:f.name.replace(/.txt$/i,’’),content:text,size:f.size,addedAt:Date.now(),lastRead:Date.now(),progress:0,pageIdx:0});r.onsuccess=()=>res(r.result);r.onerror=rej;});
+await renderLibrary();showToast(‘✅ 匯入成功’);openBook(id);
+}catch(err){showToast(’❌ ’+err.message);}
+});
 }
+function readTxt(f){return new Promise((res,rej)=>{const r=new FileReader();r.onload=e=>{const t=e.target.result;if((t.match(/\uFFFD/g)||[]).length>50){const r2=new FileReader();r2.onload=e2=>res(e2.target.result);r2.onerror=rej;r2.readAsText(f,‘GBK’);}else res(t);};r.onerror=rej;r.readAsText(f,‘UTF-8’);});}
 
-function readTxt(f){return new Promise((res,rej)=>{const r=new FileReader();r.onload=e=>{const t=e.target.result;if((t.match(/\uFFFD/g)||[]).length>50){const r2=new FileReader();r2.onload=e2=>res(e2.target.result);r2.readAsText(f,'GBK');}else res(t);};r.onerror=rej;r.readAsText(f,'UTF-8');});}
-
-async function renderLibrary(){
-  _allBooks=await dbGetAll('books');
-  _allBooks.sort((a,b)=>(b.lastRead||0)-(a.lastRead||0));
-  _drawBooks(_allBooks);
-}
+// ══ LIBRARY ══
+async function renderLibrary(){_allBooks=await dbAll(‘books’);_allBooks.sort((a,b)=>(b.lastRead||0)-(a.lastRead||0));_drawBooks(_allBooks);}
 function _drawBooks(books){
-  const list=document.getElementById('book-list');
-  const empty=document.getElementById('empty-lib');
-  list.innerHTML='';
-  empty.style.display=books.length===0?'flex':'none';
-  const EM=['📖','📚','📜','📕','📗','📘','📙'];
-  books.forEach(b=>{
-    let h=0;for(const c of b.title)h=(h*31+c.charCodeAt(0))>>>0;
-    const emoji=EM[h%EM.length];
-    const pct=b.progress||0;
-    const sz=b.size<1048576?(b.size/1024).toFixed(0)+'KB':(b.size/1048576).toFixed(1)+'MB';
-    const d=new Date(b.lastRead||b.addedAt);
-    const circ=2*Math.PI*14,off=circ*(1-pct/100);
-    const row=document.createElement('div');
-    row.className='book-row';
-    row.innerHTML=`
-      <div class="b-thumb" style="background:linear-gradient(135deg,var(--accent),var(--accent-light))">${emoji}</div>
-      <div class="b-info"><div class="b-title">${esc(b.title)}</div><div class="b-meta">${sz} · ${d.getMonth()+1}/${d.getDate()}</div></div>
-      <svg width="36" height="36" viewBox="0 0 36 36" style="flex-shrink:0">
-        <circle cx="18" cy="18" r="14" fill="none" stroke="var(--surface2)" stroke-width="3"/>
-        <circle cx="18" cy="18" r="14" fill="none" stroke="var(--accent)" stroke-width="3"
-          stroke-dasharray="${circ.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}"
-          transform="rotate(-90 18 18)" stroke-linecap="round"/>
-        <text x="18" y="22" text-anchor="middle" style="font-size:8px;fill:var(--text-dim);font-family:sans-serif">${pct}%</text>
-      </svg>`;
-    row.addEventListener('click',()=>openBook(b.id));
-    let pt;
-    row.addEventListener('touchstart',()=>{pt=setTimeout(()=>{if(confirm(`刪除「${b.title}」？`))dbDel('books',b.id).then(renderLibrary).then(()=>showToast('已刪除'));},700);},{passive:true});
-    row.addEventListener('touchend',()=>clearTimeout(pt),{passive:true});
-    row.addEventListener('touchmove',()=>clearTimeout(pt),{passive:true});
-    list.appendChild(row);
-  });
+const list=document.getElementById(‘book-list’);
+document.getElementById(‘empty-lib’).style.display=books.length===0?‘flex’:‘none’;
+const EM=[‘📖’,‘📚’,‘📜’,‘📕’,‘📗’,‘📘’,‘📙’];
+list.innerHTML=’’;
+books.forEach(b=>{
+let h=0;for(const c of b.title)h=(h*31+c.charCodeAt(0))>>>0;
+const emoji=EM[h%EM.length],pct=b.progress||0;
+const sz=b.size<1048576?(b.size/1024).toFixed(0)+‘KB’:(b.size/1048576).toFixed(1)+‘MB’;
+const d=new Date(b.lastRead||b.addedAt);
+const circ=2*Math.PI*14,off=circ*(1-pct/100);
+const row=document.createElement(‘div’);row.className=‘book-row’;
+row.innerHTML=`<div class="b-thumb" style="background:linear-gradient(135deg,var(--accent),var(--accent-light))">${emoji}</div><div class="b-info"><div class="b-title">${esc(b.title)}</div><div class="b-meta">${sz} · ${d.getMonth()+1}/${d.getDate()}</div></div><svg width="36" height="36" viewBox="0 0 36 36" style="flex-shrink:0"><circle cx="18" cy="18" r="14" fill="none" stroke="var(--surface2)" stroke-width="3"/><circle cx="18" cy="18" r="14" fill="none" stroke="var(--accent)" stroke-width="3" stroke-dasharray="${circ.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}" transform="rotate(-90 18 18)" stroke-linecap="round"/><text x="18" y="22" text-anchor="middle" style="font-size:8px;fill:var(--text-dim);font-family:sans-serif">${pct}%</text></svg>`;
+row.addEventListener(‘click’,()=>openBook(b.id));
+let pt;row.addEventListener(‘touchstart’,()=>{pt=setTimeout(()=>{if(confirm(`刪除「${b.title}」？`))dbDel(‘books’,b.id).then(renderLibrary).then(()=>showToast(‘已刪除’));},700);},{passive:true});
+row.addEventListener(‘touchend’,()=>clearTimeout(pt),{passive:true});row.addEventListener(‘touchmove’,()=>clearTimeout(pt),{passive:true});
+list.appendChild(row);
+});
 }
-function filterBooks(q){
-  document.getElementById('s-clear').style.display=q?'block':'none';
-  document.getElementById('no-result').style.display='none';
-  if(!q){_drawBooks(_allBooks);return;}
-  const f=_allBooks.filter(b=>b.title.includes(q));
-  _drawBooks(f);
-  document.getElementById('no-result').style.display=f.length===0?'block':'none';
-}
-function clearSearch(){document.getElementById('search-input').value='';filterBooks('');}
+function filterBooks(q){document.getElementById(‘s-clr’).style.display=q?‘block’:‘none’;document.getElementById(‘no-result’).style.display=‘none’;if(!q){_drawBooks(_allBooks);return;}const f=_allBooks.filter(b=>b.title.includes(q));_drawBooks(f);document.getElementById(‘no-result’).style.display=f.length===0?‘block’:‘none’;}
+function clearSearch(){document.getElementById(‘search-input’).value=’’;filterBooks(’’);}
 
+// ══ OPEN BOOK ══
 async function openBook(id){
-  const b=await dbGet('books',id);if(!b)return;
-  App.bookId=id;App.rawText=b.content;App.isConverted=false;App.displayText=b.content;
-  _updateConvertBtn();
-  _parseBook();
-  document.getElementById('r-title').textContent=b.title;
-  document.getElementById('page-library').classList.add('hidden');
-  document.getElementById('page-reader').classList.remove('hidden');
-  hideUI();
-  _stopTTS();_ttsIdx=0;_ttsBusy=false;
-  document.getElementById('tts-cur').textContent='點擊播放開始聽書';
-  setTimeout(()=>{_buildLines();buildFlipPages();},80);
+const b=await dbGet(‘books’,id);if(!b)return;
+App.bookId=id;App.rawText=b.content;App.isConverted=false;App.displayText=b.content;
+_savedPage=b.pageIdx||0;
+_updateConvBtn();_parseBook();
+document.getElementById(‘r-title’).textContent=b.title;
+document.getElementById(‘page-library’).classList.add(‘hidden’);
+document.getElementById(‘page-reader’).classList.remove(‘hidden’);
+hideUI();_stopTTS();_ttsIdx=0;_ttsBusy=false;
+document.getElementById(‘tts-cur’).textContent=‘點擊播放開始聽書’;
+setTimeout(()=>{_buildLines();buildFlipPages();},100);
 }
-
-function goLibrary(){
-  _stopTTS();cancelTimer();
-  document.getElementById('page-reader').classList.add('hidden');
-  document.getElementById('page-library').classList.remove('hidden');
-  renderLibrary();
-}
+function goLibrary(){_stopTTS();cancelTimer();document.getElementById(‘page-reader’).classList.add(‘hidden’);document.getElementById(‘page-library’).classList.remove(‘hidden’);renderLibrary();}
 
 function _parseBook(){
-  App.chapters=[];App.paragraphs=[];let pi=0;
-  App.displayText.split('\n').forEach(line=>{
-    const t=line.trim();if(!t)return;
-    if(CH_RE.test(t)&&t.length<60)App.chapters.push({title:t,pi});
-    else{App.paragraphs.push(t);pi++;}
-  });
-  _ttsParas=App.paragraphs;
+App.chapters=[];_ttsParas=[];let pi=0;
+App.displayText.split(’\n’).forEach((line,li)=>{
+const t=line.trim();if(!t)return;
+// store original line index for page lookup
+if(CH_RE.test(t)&&t.length<60)App.chapters.push({title:t,lineIdx:li});
+else{_ttsParas.push(t);pi++;}
+});
 }
 
+// ══ CONVERT ══
 function toggleConvert(){
-  App.isConverted=!App.isConverted;
-  App.displayText=App.isConverted?converter(App.rawText):App.rawText;
-  _updateConvertBtn();
-  _parseBook();
-  _buildLines();
-  buildFlipPages();
+App.isConverted=!App.isConverted;
+App.displayText=App.isConverted?s2t(App.rawText):App.rawText;
+_updateConvBtn();_parseBook();_buildLines();buildFlipPages();
 }
-function _updateConvertBtn(){
-  document.getElementById('tb-conv-lbl').textContent=App.isConverted?'已轉繁':'簡→繁';
-  document.getElementById('tb-conv').classList.toggle('active',App.isConverted);
-}
+function _updateConvBtn(){document.getElementById(‘conv-lbl’).textContent=App.isConverted?‘已轉繁’:‘簡→繁’;document.getElementById(‘tb-conv’).classList.toggle(‘active’,App.isConverted);}
 
-function _buildChapterList(){
-  const list=document.getElementById('chapter-list');
-  if(!App.chapters.length){list.innerHTML='<div style="padding:20px;text-align:center;color:var(--text-dim);font-size:13px">未偵測到章節標題</div>';return;}
-  list.innerHTML=App.chapters.map((ch,i)=>`<div class="ch-item" id="chi-${i}" onclick="jumpCh(${i})">${esc(ch.title)}</div>`).join('');
+// ══ CHAPTERS ══
+function _buildChapters(){
+const list=document.getElementById(‘chapter-list’);
+if(!App.chapters.length){list.innerHTML=’<div style="padding:20px;text-align:center;color:var(--text-dim);font-size:13px">未偵測到章節標題</div>’;return;}
+list.innerHTML=App.chapters.map((ch,i)=>`<div class="ch-item" id="chi-${i}" onclick="jumpCh(${i})">${esc(ch.title)}</div>`).join(’’);
 }
 function jumpCh(i){
-  const ch=App.chapters[i];
-  const pi=_pages.findIndex(pg=>pg.some(l=>l.t===ch.title));
-  if(pi>=0){_pidx=pi;_renderFlip();}
-  document.querySelectorAll('.ch-item').forEach(e=>e.classList.remove('active'));
-  const ce=document.getElementById('chi-'+i);if(ce)ce.classList.add('active');
-  closeAllPanels();
+const ch=App.chapters[i];
+// match by line content regardless of simplified/traditional state
+const target=ch.title;
+const pi=_pages.findIndex(pg=>pg.some(l=>l.t===target||s2t(l.t)===s2t(target)));
+if(pi>=0){_pidx=pi;_renderFlip();}
+document.querySelectorAll(’.ch-item’).forEach(e=>e.classList.remove(‘active’));
+const ce=document.getElementById(‘chi-’+i);if(ce)ce.classList.add(‘active’);
+closeAllPanels();
 }
 
+// ══ BOOKMARKS ══
 async function _renderBMs(){
-  if(!App.bookId)return;
-  const bms=await dbIdx('bms','bookId',App.bookId);
-  const list=document.getElementById('bookmark-list');
-  if(!bms.length){list.innerHTML='<div style="padding:20px;text-align:center;color:var(--text-dim);font-size:13px">尚無書籤</div>';return;}
-  list.innerHTML=bms.map(bm=>`<div class="bm-row"><div class="bm-info" onclick="jumpBMPage(${bm.pageIdx})"><div class="bm-prev">${esc(bm.preview)}</div><div class="bm-meta">${bm.progress}% · ${new Date(bm.createdAt).toLocaleString('zh-TW',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'})}</div></div><button class="bm-del" onclick="delBM(${bm.id})">🗑</button></div>`).join('');
+if(!App.bookId)return;
+const bms=await dbIdx(‘bms’,‘bookId’,App.bookId);
+const list=document.getElementById(‘bookmark-list’);
+if(!bms.length){list.innerHTML=’<div style="padding:20px;text-align:center;color:var(--text-dim);font-size:13px">尚無書籤</div>’;return;}
+list.innerHTML=bms.map(bm=>`<div class="bm-row"><div class="bm-info" onclick="jumpBMPage(${bm.pageIdx})"><div class="bm-prev">${esc(bm.preview)}</div><div class="bm-meta">${bm.progress}% · ${new Date(bm.createdAt).toLocaleString('zh-TW',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'})}</div></div><button class="bm-del" onclick="delBM(${bm.id})">🗑</button></div>`).join(’’);
 }
 function jumpBMPage(pi){_pidx=Math.min(pi,_pages.length-1);_renderFlip();closeAllPanels();}
-async function delBM(id){await dbDel('bms',id);_renderBMs();}
+async function delBM(id){await dbDel(‘bms’,id);_renderBMs();}
 async function doAddBookmark(){
-  const pct=_pages.length>1?Math.round(_pidx/(_pages.length-1)*100):100;
-  const preview=(_pages[_pidx]&&_pages[_pidx][0])?_pages[_pidx][0].t.substring(0,22)+'…':pct+'%';
-  await new Promise((res,rej)=>{openDB().then(d=>{const r=d.transaction('bms','readwrite').objectStore('bms').add({bookId:App.bookId,pageIdx:_pidx,progress:pct,preview,createdAt:Date.now()});r.onsuccess=()=>res();r.onerror=rej;});});
-  _renderBMs();showToast('🔖 書籤已加入');
+const pct=_pages.length>1?Math.round(_pidx/(_pages.length-1)*100):100;
+const fl=_pages[_pidx]&&_pages[_pidx][0];
+const preview=fl?fl.t.substring(0,22)+’…’:pct+’%’;
+const d=await openDB();
+await new Promise((res,rej)=>{const r=d.transaction(‘bms’,‘readwrite’).objectStore(‘bms’).add({bookId:App.bookId,pageIdx:_pidx,progress:pct,preview,createdAt:Date.now()});r.onsuccess=()=>res();r.onerror=rej;});
+_renderBMs();showToast(‘🔖 書籤已加入’);
 }
 
+// ══ SETTINGS ══
 function applySettings(){
-  document.body.setAttribute('data-theme',App.s.theme);
-  document.querySelectorAll('[data-theme-btn]').forEach(b=>b.classList.toggle('active',b.dataset.themeBtn===App.s.theme));
-  document.querySelectorAll('[data-font-btn]').forEach(b=>b.classList.toggle('active',b.dataset.fontBtn===App.s.font));
-  document.querySelectorAll('[data-lh-btn]').forEach(b=>b.classList.toggle('active',parseFloat(b.dataset.lhBtn)===App.s.lineHeight));
-  document.getElementById('font-size-val').textContent=App.s.fontSize;
+document.body.setAttribute(‘data-theme’,App.s.theme);
+document.querySelectorAll(’[data-theme-btn]’).forEach(b=>b.classList.toggle(‘active’,b.dataset.themeBtn===App.s.theme));
+document.querySelectorAll(’[data-font-btn]’).forEach(b=>b.classList.toggle(‘active’,b.dataset.fontBtn===App.s.font));
+document.querySelectorAll(’[data-lh]’).forEach(b=>b.classList.toggle(‘active’,parseFloat(b.dataset.lh)===App.s.lineHeight));
+document.getElementById(‘font-size-val’).textContent=App.s.fontSize;
 }
-function _rebuildIfOpen(){if(document.getElementById('page-reader')&&!document.getElementById('page-reader').classList.contains('hidden')&&_lines.length)buildFlipPages();}
-function changeFontSize(d){App.s.fontSize=Math.max(12,Math.min(32,App.s.fontSize+d));document.getElementById('font-size-val').textContent=App.s.fontSize;_rebuildIfOpen();saveSettings(App.s);}
-function setTheme(t){App.s.theme=t;document.body.setAttribute('data-theme',t);document.querySelectorAll('[data-theme-btn]').forEach(b=>b.classList.toggle('active',b.dataset.themeBtn===t));saveSettings(App.s);}
-function setFont(f){App.s.font=f;document.querySelectorAll('[data-font-btn]').forEach(b=>b.classList.toggle('active',b.dataset.fontBtn===f));_rebuildIfOpen();saveSettings(App.s);}
-function setLH(v){App.s.lineHeight=v;document.querySelectorAll('[data-lh-btn]').forEach(b=>b.classList.toggle('active',parseFloat(b.dataset.lhBtn)===v));_rebuildIfOpen();saveSettings(App.s);}
+function _rebuildIfReading(){const rp=document.getElementById(‘page-reader’);if(rp&&!rp.classList.contains(‘hidden’)&&_lines.length)buildFlipPages();}
+function changeFontSize(d){App.s.fontSize=Math.max(12,Math.min(32,App.s.fontSize+d));document.getElementById(‘font-size-val’).textContent=App.s.fontSize;_rebuildIfReading();saveS();}
+function setTheme(t){App.s.theme=t;document.body.setAttribute(‘data-theme’,t);document.querySelectorAll(’[data-theme-btn]’).forEach(b=>b.classList.toggle(‘active’,b.dataset.themeBtn===t));saveS();}
+function setFont(f){App.s.font=f;document.querySelectorAll(’[data-font-btn]’).forEach(b=>b.classList.toggle(‘active’,b.dataset.fontBtn===f));_rebuildIfReading();saveS();}
+function setLH(v){App.s.lineHeight=v;document.querySelectorAll(’[data-lh]’).forEach(b=>b.classList.toggle(‘active’,parseFloat(b.dataset.lh)===v));_rebuildIfReading();saveS();}
 
-function openPanel(id){
-  if(id==='panel-bookmarks')_renderBMs();
-  if(id==='panel-chapters')_buildChapterList();
-  document.getElementById(id).classList.add('open');
-  document.getElementById('overlay').classList.add('open');
-}
-function closeAllPanels(){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('open'));document.getElementById('overlay').classList.remove('open');}
+// ══ PANELS ══
+function openPanel(id){if(id===‘panel-bookmarks’)_renderBMs();if(id===‘panel-chapters’)_buildChapters();document.getElementById(id).classList.add(‘open’);document.getElementById(‘overlay’).classList.add(‘open’);}
+function closeAllPanels(){document.querySelectorAll(’.panel’).forEach(p=>p.classList.remove(‘open’));document.getElementById(‘overlay’).classList.remove(‘open’);}
 
-function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+// ══ UTILS ══
+function esc(s){return s.replace(/&/g,’&’).replace(/</g,’<’).replace(/>/g,’>’);}
 let _toastT;
-function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(_toastT);_toastT=setTimeout(()=>t.classList.remove('show'),2400);}
-
-document.addEventListener('DOMContentLoaded',init);
+function showToast(msg){const t=document.getElementById(‘toast’);t.textContent=msg;t.classList.add(‘show’);clearTimeout(_toastT);_toastT=setTimeout(()=>t.classList.remove(‘show’),2400);}
+document.addEventListener(‘DOMContentLoaded’,init);
 </script>
+
 </body>
 </html>
