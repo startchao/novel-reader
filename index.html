@@ -112,7 +112,12 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Serif TC',serif;-w
 <div class="page" id="page-library">
   <div class="lib-hd">
     <div class="lib-title">書　卷</div>
-    <button class="icon-btn" onclick="document.getElementById('file-input').click()">＋</button>
+    <div style="position:relative;overflow:hidden;width:40px;height:40px;border-radius:12px;">
+      <button class="icon-btn" style="width:100%;height:100%;">＋</button>
+      <input type="file" accept=".txt"
+        style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:16px;"
+        onchange="handleFileUpload(event)">
+    </div>
   </div>
   <div class="search-bar">
     <div class="search-inner">
@@ -122,15 +127,17 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Serif TC',serif;-w
     </div>
   </div>
   <div class="lib-body">
-    <div class="add-row" id="add-row" onclick="document.getElementById('file-input').click()">
+    <div class="add-row" id="add-row" style="position:relative;overflow:hidden;">
       <div class="add-thumb">📄</div>
       <div><div class="add-label">匯入 TXT 小說</div><div class="add-sub">點擊選擇檔案</div></div>
+      <input type="file" accept=".txt" id="file-input"
+        style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:16px;"
+        onchange="handleFileUpload(event)">
     </div>
     <div id="book-list"></div>
     <div class="empty-lib" id="empty-lib"><div class="ei">📚</div><div class="et">書庫空空如也</div></div>
     <div class="no-result" id="no-result">找不到符合的書籍</div>
   </div>
-  <input type="file" id="file-input" accept=".txt" style="display:none">
 </div>
 <div class="page hidden" id="page-reader">
   <div class="r-topbar ui-hide" id="r-topbar">
@@ -490,31 +497,26 @@ App.s=await loadS();applySettings();await renderLibrary();
 if(‘serviceWorker’in navigator)navigator.serviceWorker.register(’./sw.js’).catch(()=>{});
 initSwipe();previewTimer(10);
 previewTimer(10);
-// 早期可運作的寫法：直接用 .onchange
-document.getElementById(‘file-input’).onchange = async function(e){
-const f = e.target.files[0];
-if(!f) return;
-e.target.value = ‘’;
-showToast(‘載入中…’);
-try{
-const text = await readTxt(f);
-const d = await openDB();
-const id = await new Promise((res,rej)=>{
-const r = d.transaction(‘books’,‘readwrite’).objectStore(‘books’)
-.add({title:f.name.replace(/.txt$/i,’’),content:text,size:f.size,
-addedAt:Date.now(),lastRead:Date.now(),progress:0,pageIdx:0});
-r.onsuccess=()=>res(r.result);
-r.onerror=rej;
-});
-await renderLibrary();
-showToast(‘✅ 匯入成功’);
-openBook(id);
-}catch(err){
-showToast(’❌ ’+err.message);
-}
-};
+
 }
 
+async function handleFileUpload(e){
+const f=e.target.files&&e.target.files[0];
+if(!f)return;
+e.target.value=’’;
+showToast(‘載入中…’);
+try{
+const text=await readTxt(f);
+const d=await openDB();
+const id=await new Promise((res,rej)=>{
+const r=d.transaction(‘books’,‘readwrite’).objectStore(‘books’)
+.add({title:f.name.replace(/.txt$/i,’’),content:text,size:f.size,
+addedAt:Date.now(),lastRead:Date.now(),progress:0,pageIdx:0});
+r.onsuccess=()=>res(r.result);r.onerror=rej;
+});
+await renderLibrary();showToast(‘✅ 匯入成功’);openBook(id);
+}catch(err){showToast(’❌ ’+err.message);}
+}
 function readTxt(f){return new Promise((res,rej)=>{const r=new FileReader();r.onload=e=>{const t=e.target.result;if((t.match(/\uFFFD/g)||[]).length>50){const r2=new FileReader();r2.onload=e2=>res(e2.target.result);r2.onerror=rej;r2.readAsText(f,‘GBK’);}else res(t);};r.onerror=rej;r.readAsText(f,‘UTF-8’);});}
 
 // ══ LIBRARY ══
