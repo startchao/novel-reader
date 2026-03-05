@@ -112,12 +112,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Serif TC',serif;-w
 <div class="page" id="page-library">
   <div class="lib-hd">
     <div class="lib-title">書　卷 <span style="font-size:11px;opacity:.5;font-weight:400;">v9</span></div>
-    <div style="position:relative;overflow:hidden;width:40px;height:40px;border-radius:12px;">
-      <button class="icon-btn" style="width:100%;height:100%;">＋</button>
-      <input type="file" accept=".txt"
-        style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:16px;"
-        onchange="handleFileUpload(event)">
-    </div>
+    <label for="file-input-main" class="icon-btn" style="cursor:pointer;display:flex;align-items:center;justify-content:center;">＋</label>
   </div>
   <div class="search-bar">
     <div class="search-inner">
@@ -127,13 +122,15 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Serif TC',serif;-w
     </div>
   </div>
   <div class="lib-body">
-    <div class="add-row" id="add-row" style="position:relative;overflow:hidden;">
+    <label class="add-row" id="add-row" for="file-input-main" style="cursor:pointer;">
       <div class="add-thumb">📄</div>
       <div><div class="add-label">匯入 TXT 小說</div><div class="add-sub">點擊選擇檔案</div></div>
-      <input type="file" accept=".txt" id="file-input"
-        style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:16px;"
-        onchange="handleFileUpload(event)">
-    </div>
+    </label>
+    <input type="file" accept=".txt" id="file-input-main"
+      style="display:block;width:100%;padding:10px 16px;margin-top:4px;
+             font-size:15px;color:var(--text-dim);background:var(--surface);
+             border:1px dashed var(--border);border-radius:12px;box-sizing:border-box;"
+      onchange="handleFileUpload(event)">
     <div id="book-list"></div>
     <div class="empty-lib" id="empty-lib"><div class="ei">📚</div><div class="et">書庫空空如也</div></div>
     <div class="no-result" id="no-result">找不到符合的書籍</div>
