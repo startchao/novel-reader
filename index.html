@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="書卷">
 <meta name="theme-color" content="#8b5e3c">
-<title>書卷 v9</title>
+<title>書卷 v10</title>
 <link rel="manifest" href="manifest.json">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500&family=Noto+Sans+TC:wght@300;400;500&display=swap');
@@ -111,7 +111,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Serif TC',serif;-w
 <body data-theme="day">
 <div class="page" id="page-library">
   <div class="lib-hd">
-    <div class="lib-title">書　卷 <span style="font-size:11px;opacity:.5;font-weight:400;">v9</span></div>
+    <div class="lib-title">書　卷 <span style="font-size:11px;opacity:.5;font-weight:400;">v10</span></div>
     <label for="file-input-main" class="icon-btn" style="cursor:pointer;display:flex;align-items:center;justify-content:center;">＋</label>
   </div>
   <div class="search-bar">
@@ -491,7 +491,12 @@ function _applyUI(){document.getElementById(‘r-topbar’).classList.toggle(‘
 // ══ INIT ══
 async function init(){
 App.s=await loadS();applySettings();await renderLibrary();
-if(‘serviceWorker’in navigator)navigator.serviceWorker.register(’./sw.js’).catch(()=>{});
+// 主動登出所有 Service Worker，確保每次都用最新版
+if(‘serviceWorker’in navigator){
+navigator.serviceWorker.getRegistrations().then(regs=>{
+regs.forEach(r=>r.unregister());
+});
+}
 initSwipe();previewTimer(10);
 previewTimer(10);
 
