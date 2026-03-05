@@ -9,6 +9,7 @@
 <meta name="theme-color" content="#8b5e3c">
 <title>書卷</title>
 <link rel="manifest" href="manifest.json">
+<script src="https://cdn.jsdelivr.net/npm/opencc-js@1.0.5/dist/umd/cn2t.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500&family=Noto+Sans+TC:wght@300;400;500&display=swap');
 :root{--bg:#f5f0e8;--surface:#ede7da;--surface2:#e3ddd0;--card:#fff9f0;--text:#1e1408;--text-dim:#7a6e5a;--accent:#8b5e3c;--accent-light:#c49a6c;--border:#d5cec2;--shadow:rgba(44,30,14,.12);--radius:14px;--safe-top:env(safe-area-inset-top,0px);--safe-bottom:env(safe-area-inset-bottom,0px);}
@@ -168,7 +169,6 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Serif TC',serif;-w
 
 <div class="overlay" id="overlay" onclick="closeAllPanels()"></div>
 
-<!-- 面板們 -->
 <div class="panel" id="panel-settings">
   <div class="panel-handle"></div>
   <div class="panel-title">閱讀設定 <span class="panel-close" onclick="closeAllPanels()">×</span></div>
@@ -229,8 +229,15 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Serif TC',serif;-w
     <div class="tts-cur" id="tts-cur">點擊播放開始聽書</div>
     <div class="tts-ctrl">
       <button class="tts-cb" onclick="ttsPrev()">⏮</button>
-      <button class="tts-cb" id="tts-playpause" class="play" onclick="toggleTTSPlay()">▶</button>
+      <button class="tts-cb play" id="tts-playpause" onclick="toggleTTSPlay()">▶</button>
       <button class="tts-cb" onclick="ttsNext()">⏭</button>
+    </div>
+    <div class="srow" style="margin-top:16px;">
+      <span class="slabel">語速</span>
+      <div style="flex:1;display:flex;align-items:center;gap:10px;">
+        <input type="range" min="0.5" max="2" step="0.1" value="1" id="tts-rate-slider">
+        <span id="tts-rate-val">1.0</span>
+      </div>
     </div>
   </div>
 </div>
@@ -238,7 +245,6 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Serif TC',serif;-w
 <div class="toast" id="toast"></div>
 
 <script>
-// ── IndexedDB ──
 const DB_NAME='NovelReaderDB',DB_VER=1;
 let db;
 function openDB(){return new Promise((res,rej)=>{const req=indexedDB.open(DB_NAME,DB_VER);req.onupgradeneeded=e=>{const d=e.target.result;d.createObjectStore('books',{keyPath:'id',autoIncrement:true});d.createObjectStore('bms',{keyPath:'id',autoIncrement:true}).createIndex('bookId','bookId',{unique:false});};req.onsuccess=e=>{db=e.target.result;res(db)};req.onerror=rej;});}
@@ -248,12 +254,13 @@ function dbPut(store,obj){return new Promise((res,rej)=>{openDB().then(d=>{const
 function dbDel(store,id){return new Promise((res,rej)=>{openDB().then(d=>{const t=d.transaction(store,'readwrite').objectStore(store).delete(id);t.onsuccess=()=>res();t.onerror=rej;});});}
 function dbIdx(store,idx,val){return new Promise((res,rej)=>{openDB().then(d=>{const t=d.transaction(store).objectStore(store).index(idx).getAll(val);t.onsuccess=()=>res(t.result);t.onerror=rej;});});}
 
-// ── SETTINGS ──
 function loadSettings(){return new Promise(r=>{const s=localStorage.getItem('settings');r(s?JSON.parse(s):{fontSize:18,lineHeight:2,font:'serif',theme:'day'});});}
 function saveSettings(s){localStorage.setItem('settings',JSON.stringify(s));}
 
-// ── TTS ── (簡易範例實現，實際需 browser TTS 支援)
 let _ttsUtter,_ttsIdx=0,_ttsParas=[],_ttsBusy=false;
+let ttsRate=1.0;
+const converter = OpenCC.Converter({from:'cn',to:'tw'});
+
 function toggleTTS(){
   if('speechSynthesis'in window){
     if(_ttsBusy){speechSynthesis.cancel();_ttsBusy=false;document.getElementById('tts-playpause').textContent='▶';document.getElementById('tts-cur').textContent='已停止';}
@@ -270,15 +277,15 @@ function _speakPara(i){
   _ttsBusy=true;document.getElementById('tts-playpause').textContent='⏸';
   document.getElementById('tts-cur').textContent=_ttsParas[i].substring(0,40)+'...';
   _ttsUtter=new SpeechSynthesisUtterance(_ttsParas[i]);
-  _ttsUtter.lang='zh-TW';_ttsUtter.rate=1;_ttsUtter.pitch=1;_ttsUtter.volume=1;
+  _ttsUtter.lang='zh-TW';_ttsUtter.rate=ttsRate;_ttsUtter.pitch=1;_ttsUtter.volume=1;
   _ttsUtter.onend=()=>{setTimeout(()=>{if(_ttsBusy)_speakPara(++_ttsIdx);},300);};
   speechSynthesis.speak(_ttsUtter);
 }
 function ttsPrev(){if(_ttsIdx>0){_ttsIdx--;speechSynthesis.cancel();_speakPara(_ttsIdx);}}
 function ttsNext(){if(_ttsIdx<_ttsParas.length-1){_ttsIdx++;speechSynthesis.cancel();_speakPara(_ttsIdx);}}
 function _stopTTS(){speechSynthesis.cancel();_ttsBusy=false;document.getElementById('tts-playpause').textContent='▶';}
+document.getElementById('tts-rate-slider').oninput=e=>{ttsRate=parseFloat(e.target.value);document.getElementById('tts-rate-val').textContent=ttsRate.toFixed(1);};
 
-// ── TIMER ──
 let _timerId=null,_timerSec=0;
 function previewTimer(min){document.getElementById('timer-display').textContent=`${min}:00`;}
 document.getElementById('timer-slider').oninput=e=>{previewTimer(e.target.value);};
@@ -296,7 +303,6 @@ function startTimer(){
 document.getElementById('timer-slider').onchange=startTimer;
 function cancelTimer(){clearInterval(_timerId);_timerSec=0;document.getElementById('timer-cancel').style.display='none';document.getElementById('timer-display').textContent='00:00';}
 
-// ── FLIP ──
 let _pages=[],_pidx=0,_lines=[];
 const CH_RE=/^(第[零一二三四五六七八九十百千万萬\d]+[章节卷集回話话篇]+|Chapter\s*\d+|第\s*\d+\s*章|序章|前言|尾聲|後記|附錄|番外|楔子)/;
 
@@ -359,7 +365,6 @@ function initSwipe(){
   },{passive:true});
 }
 
-// ── APP ──
 const App={bookId:null,rawText:'',displayText:'',isConverted:false,
   s:{fontSize:18,lineHeight:2,font:'serif',theme:'day'},
   chapters:[],paragraphs:[]};
@@ -381,6 +386,7 @@ async function init(){
   if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
   initSwipe();
   previewTimer(10);
+  document.getElementById('tts-rate-val').textContent=ttsRate.toFixed(1);
   document.getElementById('file-input').onchange=async e=>{
     const f=e.target.files[0];if(!f)return;e.target.value='';
     showToast('載入中…');
@@ -474,19 +480,16 @@ function _parseBook(){
 
 function toggleConvert(){
   App.isConverted=!App.isConverted;
-  App.displayText=App.isConverted?s2t(App.rawText):App.rawText;
+  App.displayText=App.isConverted?converter(App.rawText):App.rawText;
   _updateConvertBtn();
   _parseBook();
   _buildLines();
   buildFlipPages();
 }
 function _updateConvertBtn(){
-  const btn=document.getElementById('tb-conv');
   document.getElementById('tb-conv-lbl').textContent=App.isConverted?'已轉繁':'簡→繁';
-  btn.classList.toggle('active',App.isConverted);
+  document.getElementById('tb-conv').classList.toggle('active',App.isConverted);
 }
-
-function s2t(s){return s.replace(/[a-zA-Z]/g,'').replace(/[\u4e00-\u9fa5]/g,c=>{const code=c.charCodeAt(0);return code>=0x4e00&&code<=0x9fff?String.fromCharCode(code+('繁'.charCodeAt(0)-'简'.charCodeAt(0))):c;});} // 簡易版簡轉繁
 
 function _buildChapterList(){
   const list=document.getElementById('chapter-list');
