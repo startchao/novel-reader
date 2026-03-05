@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="書卷">
 <meta name="theme-color" content="#8b5e3c">
-<title>書卷 v10</title>
+<title>書卷 v11</title>
 <link rel="manifest" href="manifest.json">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500&family=Noto+Sans+TC:wght@300;400;500&display=swap');
@@ -111,7 +111,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Serif TC',serif;-w
 <body data-theme="day">
 <div class="page" id="page-library">
   <div class="lib-hd">
-    <div class="lib-title">書　卷 <span style="font-size:11px;opacity:.5;font-weight:400;">v10</span></div>
+    <div class="lib-title">書　卷 <span style="font-size:11px;opacity:.5;font-weight:400;">v11</span></div>
     <label for="file-input-main" class="icon-btn" style="cursor:pointer;display:flex;align-items:center;justify-content:center;">＋</label>
   </div>
   <div class="search-bar">
@@ -504,20 +504,28 @@ previewTimer(10);
 
 async function handleFileUpload(e){
 const f=e.target.files&&e.target.files[0];
-if(!f)return;
+if(!f){showToast(‘❌ 步驟1失敗：沒有檔案’);return;}
+showToast(‘✅ 步驟1：選到 ‘+f.name);
 e.target.value=’’;
-showToast(‘載入中…’);
 try{
 const text=await readTxt(f);
+showToast(‘✅ 步驟2：讀取成功 ‘+Math.round(text.length/1000)+‘K字’);
+await new Promise(r=>setTimeout(r,1500));
 const id=await dbOp(‘books’,‘readwrite’,s=>s.add({
 title:f.name.replace(/.txt$/i,’’),
 content:text,size:f.size,
 addedAt:Date.now(),lastRead:Date.now(),progress:0,pageIdx:0
 }));
+showToast(‘✅ 步驟3：存入DB id=’+id);
+await new Promise(r=>setTimeout(r,1500));
 await renderLibrary();
-showToast(‘✅ 匯入成功’);
+showToast(‘✅ 匯入成功！’);
+await new Promise(r=>setTimeout(r,1000));
 openBook(id);
-}catch(err){showToast(’❌ ’+err.message);}
+}catch(err){
+showToast(‘❌ 失敗：’+err.message);
+console.error(err);
+}
 }
 function readTxt(f){return new Promise((res,rej)=>{const r=new FileReader();r.onload=e=>{const t=e.target.result;if((t.match(/\uFFFD/g)||[]).length>50){const r2=new FileReader();r2.onload=e2=>res(e2.target.result);r2.onerror=rej;r2.readAsText(f,‘GBK’);}else res(t);};r.onerror=rej;r.readAsText(f,‘UTF-8’);});}
 
