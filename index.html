@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="書卷">
 <meta name="theme-color" content="#8b5e3c">
-<title>書卷 v13</title>
+<title>書卷 v14</title>
 <link rel="manifest" href="manifest.json">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500&family=Noto+Sans+TC:wght@300;400;500&display=swap');
@@ -111,10 +111,8 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Serif TC',serif;-w
 <body data-theme="day">
 <div class="page" id="page-library">
   <div class="lib-hd">
-    <div class="lib-title">書　卷 <span style="font-size:11px;opacity:.5;font-weight:400;">v13</span></div>
-    <label class="icon-btn" style="cursor:pointer;display:flex;align-items:center;justify-content:center;">＋
-      <input type="file" accept=".txt" style="display:none;" id="file-input-top">
-    </label>
+    <div class="lib-title">書　卷 <span style="font-size:11px;opacity:.5;font-weight:400;">v14</span></div>
+    <div class="icon-btn" style="opacity:0.3;font-size:12px;">＋</div>
   </div>
   <div class="search-bar">
     <div class="search-inner">
@@ -124,11 +122,14 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Serif TC',serif;-w
     </div>
   </div>
   <div class="lib-body">
-    <label class="add-row" id="add-row" style="cursor:pointer;">
+    <div class="add-row" id="add-row">
       <div class="add-thumb">📄</div>
-      <div><div class="add-label">匯入 TXT 小說</div><div class="add-sub">點擊選擇檔案</div></div>
-      <input type="file" accept=".txt" id="file-input-main" style="display:none;">
-    </label>
+      <div style="flex:1">
+        <div class="add-label">匯入 TXT 小說</div>
+        <input type="file" accept=".txt" id="file-input-main"
+          style="margin-top:6px;font-size:15px;width:100%;">
+      </div>
+    </div>
     <div id="book-list"></div>
     <div class="empty-lib" id="empty-lib"><div class="ei">📚</div><div class="et">書庫空空如也</div></div>
     <div class="no-result" id="no-result">找不到符合的書籍</div>
@@ -496,10 +497,8 @@ regs.forEach(r=>r.unregister());
 });
 }
 // label 包 input 方式，用 addEventListener 綁定兩個 input
-[‘file-input-main’,‘file-input-top’].forEach(id=>{
-const fi=document.getElementById(id);
+const fi=document.getElementById(‘file-input-main’);
 if(fi)fi.addEventListener(‘change’,handleFileUpload);
-});
 initSwipe();previewTimer(10);
 previewTimer(10);
 
