@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="書卷">
 <meta name="theme-color" content="#8b5e3c">
-<title>書卷 v15</title>
+<title>書卷 v16</title>
 <link rel="manifest" href="manifest.json">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500&family=Noto+Sans+TC:wght@300;400;500&display=swap');
@@ -111,7 +111,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Serif TC',serif;-w
 <body data-theme="day">
 <div class="page" id="page-library">
   <div class="lib-hd">
-    <div class="lib-title">書　卷 <span style="font-size:11px;opacity:.5;font-weight:400;">v15</span></div>
+    <div class="lib-title">書　卷 <span style="font-size:11px;opacity:.5;font-weight:400;">v16</span></div>
     <div class="icon-btn" style="opacity:0.3;font-size:12px;">＋</div>
   </div>
   <div class="search-bar">
@@ -489,9 +489,12 @@ function _applyUI(){document.getElementById(‘r-topbar’).classList.toggle(‘
 
 // ══ INIT ══
 async function init(){
-// 最優先綁定，不受後續任何錯誤影響
+// 同時監聽 change 和 input，確保 iOS Safari 任何版本都能觸發
 const fi=document.getElementById(‘file-input-main’);
-if(fi)fi.addEventListener(‘change’,handleFileUpload);
+if(fi){
+fi.addEventListener(‘change’,handleFileUpload);
+fi.addEventListener(‘input’,handleFileUpload);
+}
 App.s=await loadS();applySettings();await renderLibrary();
 // 主動登出所有 Service Worker，確保每次都用最新版
 if(‘serviceWorker’in navigator){
