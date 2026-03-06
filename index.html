@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="書卷">
 <meta name="theme-color" content="#8b5e3c">
-<title>書卷 v14</title>
+<title>書卷 v15</title>
 <link rel="manifest" href="manifest.json">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500&family=Noto+Sans+TC:wght@300;400;500&display=swap');
@@ -111,7 +111,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Serif TC',serif;-w
 <body data-theme="day">
 <div class="page" id="page-library">
   <div class="lib-hd">
-    <div class="lib-title">書　卷 <span style="font-size:11px;opacity:.5;font-weight:400;">v14</span></div>
+    <div class="lib-title">書　卷 <span style="font-size:11px;opacity:.5;font-weight:400;">v15</span></div>
     <div class="icon-btn" style="opacity:0.3;font-size:12px;">＋</div>
   </div>
   <div class="search-bar">
@@ -489,6 +489,9 @@ function _applyUI(){document.getElementById(‘r-topbar’).classList.toggle(‘
 
 // ══ INIT ══
 async function init(){
+// 最優先綁定，不受後續任何錯誤影響
+const fi=document.getElementById(‘file-input-main’);
+if(fi)fi.addEventListener(‘change’,handleFileUpload);
 App.s=await loadS();applySettings();await renderLibrary();
 // 主動登出所有 Service Worker，確保每次都用最新版
 if(‘serviceWorker’in navigator){
@@ -496,37 +499,27 @@ navigator.serviceWorker.getRegistrations().then(regs=>{
 regs.forEach(r=>r.unregister());
 });
 }
-// label 包 input 方式，用 addEventListener 綁定兩個 input
-const fi=document.getElementById(‘file-input-main’);
-if(fi)fi.addEventListener(‘change’,handleFileUpload);
 initSwipe();previewTimer(10);
-previewTimer(10);
 
 }
 
 async function handleFileUpload(e){
 const f=e.target.files&&e.target.files[0];
-if(!f){showToast(‘❌ 步驟1失敗：沒有檔案’);return;}
-showToast(‘✅ 步驟1：選到 ‘+f.name);
+if(!f)return;
 e.target.value=’’;
+showToast(‘載入中…’);
 try{
 const text=await readTxt(f);
-showToast(‘✅ 步驟2：讀取成功 ‘+Math.round(text.length/1000)+‘K字’);
-await new Promise(r=>setTimeout(r,1500));
 const id=await dbOp(‘books’,‘readwrite’,s=>s.add({
 title:f.name.replace(/.txt$/i,’’),
 content:text,size:f.size,
 addedAt:Date.now(),lastRead:Date.now(),progress:0,pageIdx:0
 }));
-showToast(‘✅ 步驟3：存入DB id=’+id);
-await new Promise(r=>setTimeout(r,1500));
 await renderLibrary();
-showToast(‘✅ 匯入成功！’);
-await new Promise(r=>setTimeout(r,1000));
+showToast(‘✅ 匯入成功’);
 openBook(id);
 }catch(err){
-showToast(‘❌ 失敗：’+err.message);
-console.error(err);
+showToast(’❌ ’+err.message);
 }
 }
 function readTxt(f){return new Promise((res,rej)=>{const r=new FileReader();r.onload=e=>{const t=e.target.result;if((t.match(/\uFFFD/g)||[]).length>50){const r2=new FileReader();r2.onload=e2=>res(e2.target.result);r2.onerror=rej;r2.readAsText(f,‘GBK’);}else res(t);};r.onerror=rej;r.readAsText(f,‘UTF-8’);});}
