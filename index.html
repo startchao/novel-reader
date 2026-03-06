@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="書卷">
 <meta name="theme-color" content="#8b5e3c">
-<title>書卷 v2.0.0</title>
+<title>書卷 v2.0.1</title>
 <link rel="manifest" href="manifest.json">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500&family=Noto+Sans+TC:wght@300;400;500&display=swap');
@@ -111,8 +111,8 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Serif TC',serif;-w
 <body data-theme="day">
 <div class="page" id="page-library">
   <div class="lib-hd">
-    <div class="lib-title">書　卷 <span style="font-size:11px;opacity:.5;font-weight:400;">v2.0.0</span></div>
-    <label for="file-input" class="icon-btn">＋</label>
+    <div class="lib-title">書　卷 <span style="font-size:11px;opacity:.5;font-weight:400;">v2.0.1</span></div>
+    <button class="icon-btn" id="upload-btn">＋</button>
   </div>
   <div class="search-bar">
     <div class="search-inner">
@@ -122,11 +122,11 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Serif TC',serif;-w
     </div>
   </div>
   <div class="lib-body">
-    <label for="file-input" class="add-row" id="add-row">
+    <div class="add-row" id="add-row">
       <div class="add-thumb">📄</div>
       <div><div class="add-label">匯入 TXT 小說</div><div class="add-sub">點擊選擇檔案</div></div>
-    </label>
-    <input type="file" id="file-input" accept=".txt" onchange="handleFileUpload(this)" style="position:fixed;top:-100px;left:-100px;width:1px;height:1px;opacity:0;">
+    </div>
+    <input type="file" id="file-input" accept=".txt" style="display:none">
     <div id="book-list"></div>
     <div class="empty-lib" id="empty-lib"><div class="ei">📚</div><div class="et">書庫空空如也</div></div>
     <div class="no-result" id="no-result">找不到符合的書籍</div>
@@ -486,6 +486,13 @@ function _applyUI(){document.getElementById(‘r-topbar’).classList.toggle(‘
 
 // ══ INIT ══
 async function init(){
+const fi=document.getElementById(‘file-input’);
+const addRow=document.getElementById(‘add-row’);
+const uploadBtn=document.getElementById(‘upload-btn’);
+if(fi) fi.addEventListener(‘change’,function(){ handleFileUpload(fi); });
+if(addRow) addRow.addEventListener(‘click’,function(){ if(fi)fi.click(); });
+if(uploadBtn) uploadBtn.addEventListener(‘click’,function(){ if(fi)fi.click(); });
+
 App.s=await loadS();applySettings();await renderLibrary();
 // 主動登出所有 Service Worker，確保每次都用最新版
 if(‘serviceWorker’in navigator){
