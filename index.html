@@ -502,20 +502,24 @@ initSwipe();previewTimer(10);
 }
 
 async function handleFileUpload(input){
-const f=input.files[0];if(!f)return;
-input.value=’’;
+if(!input.files||!input.files.length)return;
+const f=input.files[0];
+const fname=f.name;const fsize=f.size;
 showToast(‘載入中…’);
 try{
 const text=await readTxt(f);
+input.value=’’;
 const id=await dbOp(‘books’,‘readwrite’,s=>s.add({
-title:f.name.replace(/.txt$/i,’’),
-content:text,size:f.size,
+title:fname.replace(/.txt$/i,’’),
+content:text,size:fsize,
 addedAt:Date.now(),lastRead:Date.now(),progress:0,pageIdx:0
 }));
 await renderLibrary();showToast(‘✅ 匯入成功’);openBook(id);
-}catch(err){showToast(’❌ ’+err.message);}
+}catch(err){
+input.value=’’;
+showToast(’❌ ’+(err&&err.message?err.message:String(err)));
 }
-function readTxt(f){return new Promise((res,rej)=>{const r=new FileReader();r.onload=e=>{const t=e.target.result;if((t.match(/\uFFFD/g)||[]).length>50){const r2=new FileReader();r2.onload=e2=>res(e2.target.result);r2.onerror=rej;r2.readAsText(f,‘GBK’);}else res(t);};r.onerror=rej;r.readAsText(f,‘UTF-8’);});}
+}function readTxt(f){return new Promise((res,rej)=>{const r=new FileReader();r.onload=e=>{const t=e.target.result;if((t.match(/\uFFFD/g)||[]).length>50){const r2=new FileReader();r2.onload=e2=>res(e2.target.result);r2.onerror=rej;r2.readAsText(f,‘GBK’);}else res(t);};r.onerror=rej;r.readAsText(f,‘UTF-8’);});}
 
 // ══ LIBRARY ══
 async function renderLibrary(){_allBooks=await dbAll(‘books’);_allBooks.sort((a,b)=>(b.lastRead||0)-(a.lastRead||0));_drawBooks(_allBooks);}
