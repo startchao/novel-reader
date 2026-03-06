@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>書卷 v2.0.1</title>
+<title>書卷 v2.0.2</title>
 <style>
 :root {
   --bg: #f0ece2;
@@ -51,9 +51,9 @@ body { background: var(--bg); color: var(--text); font-family: "Georgia","Songti
 
 /* 宮格 */
 .section-title { font-size: 12px; color: var(–text-dim); letter-spacing: 2px; margin-bottom: 14px; padding-left: 2px; }
-.book-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-.book-cell { cursor: pointer; user-select: none; }
-.book-cover { aspect-ratio: 3/4; border-radius: 10px; background: var(–surface); border: 1px solid var(–border); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px 8px; position: relative; overflow: hidden; transition: transform 0.15s; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+.book-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; width: 100%; }
+.book-cell { cursor: pointer; user-select: none; min-width: 0; }
+.book-cover { aspect-ratio: 3/4; border-radius: 10px; background: var(–surface); border: 1px solid var(–border); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px 8px 10px 14px; position: relative; overflow: hidden; transition: transform 0.15s; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
 .book-cell:active .book-cover { transform: scale(0.96); }
 .book-cover-spine { position: absolute; left: 0; top: 0; bottom: 0; width: 6px; border-radius: 10px 0 0 10px; }
 .book-cover-title { font-size: 13px; font-weight: 700; text-align: center; color: var(–text); line-height: 1.4; word-break: break-all; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; padding-left: 8px; }
@@ -66,33 +66,39 @@ body { background: var(--bg); color: var(--text); font-family: "Georgia","Songti
 
 /* 閱讀器 */
 #page-reader { background: var(–bg); overflow: hidden; }
-.r-topbar { position: absolute; top: 0; left: 0; right: 0; padding: calc(var(–safe-top) + 10px) 16px 12px; background: var(–surface); border-bottom: 1px solid var(–border); display: flex; align-items: center; gap: 10px; z-index: 100; transition: transform 0.25s, opacity 0.25s; }
+
+/* 翻頁 - 全螢幕 */
+.flip-viewport { position: absolute; inset: 0; overflow: hidden; }
+.flip-canvas { position: absolute; top: 0; bottom: 0; left: 0; display: flex; transition: transform 0.3s cubic-bezier(0.4,0,0.2,1); will-change: transform; }
+.flip-page { width: 100vw; height: 100vh; flex-shrink: 0; overflow: hidden; display: flex; flex-direction: column; padding: calc(var(–safe-top) + 52px) 22px calc(var(–safe-bot) + 36px); }
+.flip-page-text { flex: 1; overflow: hidden; line-height: 2; color: var(–text); white-space: pre-wrap; word-break: break-all; }
+
+/* 頁碼 - 底部中央小字，常駐顯示 */
+.r-page-indicator { position: absolute; bottom: calc(var(–safe-bot) + 10px); left: 0; right: 0; text-align: center; font-size: 11px; color: var(–text-dim); pointer-events: none; z-index: 10; opacity: 0.6; }
+
+/* 頂部浮動工具列 */
+.r-topbar { position: absolute; top: 0; left: 0; right: 0; padding: calc(var(–safe-top) + 8px) 16px 10px; background: rgba(250,248,243,0.95); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(–border); display: flex; align-items: center; gap: 10px; z-index: 100; transition: transform 0.25s, opacity 0.25s; }
+[data-night] .r-topbar { background: rgba(36,34,40,0.95); }
 .r-topbar.hidden-ui { transform: translateY(-100%); opacity: 0; pointer-events: none; }
 .r-back { width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(–border); background: var(–surface2); color: var(–text); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .r-title { flex: 1; font-size: 15px; font-weight: 600; color: var(–text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: center; }
 .r-toc-btn { width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(–border); background: var(–surface2); color: var(–text); font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 
-/* 翻頁 */
-.flip-viewport { position: absolute; inset: 0; overflow: hidden; }
-.flip-canvas { position: absolute; top: 0; bottom: 0; left: 0; display: flex; transition: transform 0.28s cubic-bezier(0.4,0,0.2,1); will-change: transform; }
-.flip-page { width: 100vw; flex-shrink: 0; overflow: hidden; display: flex; flex-direction: column; padding: 70px 24px 80px; }
-.flip-page-text { flex: 1; overflow: hidden; line-height: 1.9; color: var(–text); white-space: pre-wrap; word-break: break-all; }
+/* 底部浮動工具列 */
+.r-botbar { position: absolute; bottom: 0; left: 0; right: 0; padding: 12px 20px calc(var(–safe-bot) + 12px); background: rgba(250,248,243,0.95); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-top: 1px solid var(–border); z-index: 100; transition: transform 0.25s, opacity 0.25s; }
+[data-night] .r-botbar { background: rgba(36,34,40,0.95); }
+.r-botbar.hidden-ui { transform: translateY(100%); opacity: 0; pointer-events: none; }
+.r-tools { display: flex; justify-content: space-around; align-items: center; }
+.r-tool-btn { display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; padding: 6px 14px; border-radius: 10px; border: none; background: none; color: var(–text); transition: background 0.15s; }
+.r-tool-btn:active { background: var(–surface2); }
+.r-tool-icon { font-size: 22px; }
+.r-tool-label { font-size: 10px; color: var(–text-dim); }
 
 /* 熱區 */
 .tap-zone { position: absolute; top: 0; height: 100%; z-index: 50; }
 #tap-prev { left: 0; width: 30%; }
 #tap-mid  { left: 30%; width: 40%; }
 #tap-next { right: 0; width: 30%; }
-
-/* 底部列 */
-.r-botbar { position: absolute; bottom: 0; left: 0; right: 0; padding: 14px 20px calc(var(–safe-bot) + 14px); background: var(–surface); border-top: 1px solid var(–border); z-index: 100; transition: transform 0.25s, opacity 0.25s; }
-.r-botbar.hidden-ui { transform: translateY(100%); opacity: 0; pointer-events: none; }
-.r-page-info { text-align: center; font-size: 11px; color: var(–text-dim); margin-bottom: 12px; letter-spacing: 1px; }
-.r-tools { display: flex; justify-content: space-around; align-items: center; }
-.r-tool-btn { display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; padding: 6px 10px; border-radius: 10px; border: none; background: none; color: var(–text); transition: background 0.15s; }
-.r-tool-btn:active { background: var(–surface2); }
-.r-tool-icon { font-size: 20px; }
-.r-tool-label { font-size: 10px; color: var(–text-dim); }
 
 /* 目錄 */
 .toc-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 200; opacity: 0; pointer-events: none; transition: opacity 0.25s; }
@@ -140,7 +146,7 @@ body { background: var(--bg); color: var(--text); font-family: "Georgia","Songti
   <div class="lib-header">
     <div>
       <span class="lib-title">書　卷</span>
-      <span class="lib-version">v2.0.1</span>
+      <span class="lib-version">v2.0.2</span>
     </div>
     <button class="hdr-btn" id="night-btn" onclick="toggleNight()">🌙</button>
   </div>
@@ -463,8 +469,12 @@ function hideUI()   { _uiVisible=false; applyUIState(); }
 function applyUIState() {
   document.getElementById('r-topbar').classList.toggle('hidden-ui',!_uiVisible);
   document.getElementById('r-botbar').classList.toggle('hidden-ui',!_uiVisible);
+  // 隱藏 UI 時同時收起字級面板
+  if (!_uiVisible) closeSizePanel();
 }
 function closeReader() {
+  closeSizePanel();
+  closeTOC();
   document.getElementById('page-reader').classList.add('hidden');
   document.getElementById('page-lib').classList.remove('hidden');
   renderLibrary();
