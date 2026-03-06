@@ -126,7 +126,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Serif TC',serif;-w
       <div class="add-thumb">📄</div>
       <div><div class="add-label">匯入 TXT 小說</div><div class="add-sub">點擊選擇檔案</div></div>
     </label>
-    <input type="file" id="file-input" accept=".txt" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;">
+    <input type="file" id="file-input" accept=".txt" onchange="handleFileUpload(this)" style="position:fixed;top:-100px;left:-100px;width:1px;height:1px;opacity:0;">
     <div id="book-list"></div>
     <div class="empty-lib" id="empty-lib"><div class="ei">📚</div><div class="et">書庫空空如也</div></div>
     <div class="no-result" id="no-result">找不到符合的書籍</div>
@@ -486,10 +486,6 @@ function _applyUI(){document.getElementById(‘r-topbar’).classList.toggle(‘
 
 // ══ INIT ══
 async function init(){
-// 上傳相關綁定，全部用 addEventListener 避免 CSP 限制
-const fi=document.getElementById(‘file-input’);
-if(fi) fi.addEventListener(‘change’,function(){ handleFileUpload(fi); });
-
 App.s=await loadS();applySettings();await renderLibrary();
 // 主動登出所有 Service Worker，確保每次都用最新版
 if(‘serviceWorker’in navigator){
@@ -505,6 +501,8 @@ async function handleFileUpload(input){
 if(!input.files||!input.files.length)return;
 const f=input.files[0];
 const fname=f.name;const fsize=f.size;
+// iCloud 未下載的檔案大小為 0
+if(fsize===0){showToast(‘❌ 檔案尚未從 iCloud 下載，請先下載後再匯入’);input.value=’’;return;}
 showToast(‘載入中…’);
 try{
 const text=await readTxt(f);
