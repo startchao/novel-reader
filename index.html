@@ -3,517 +3,821 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>書卷 v2.0.2</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="書卷">
+<meta name="theme-color" content="#8b5e3c">
+<title>書卷</title>
+<link rel="manifest" href="manifest.json">
 <style>
-:root {
-  --bg: #f0ece2;
-  --surface: #faf8f3;
-  --surface2: #ede9df;
-  --border: #e0d9cc;
-  --text: #2c2a26;
-  --text-dim: #8a8070;
-  --accent: #7a5230;
-  --accent2: #b8936a;
-  --safe-top: env(safe-area-inset-top, 0px);
-  --safe-bot: env(safe-area-inset-bottom, 0px);
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500&family=Noto+Sans+TC:wght@300;400;500&display=swap');
+:root{
+  --bg:#f5f0e8;--surface:#ede7da;--surface2:#e3ddd0;
+  --text:#1e1408;--text-dim:#7a6e5a;--accent:#8b5e3c;--accent-light:#c49a6c;
+  --border:#d5cec2;--shadow:rgba(44,30,14,.12);
+  --safe-top:env(safe-area-inset-top,0px);--safe-bottom:env(safe-area-inset-bottom,0px);
 }
-[data-night] {
-  --bg: #18171a;
-  --surface: #242228;
-  --surface2: #2e2c33;
-  --border: #3a3840;
-  --text: #e8e4da;
-  --text-dim: #7a7468;
-  --accent: #c4915a;
-  --accent2: #8a6040;
-}
-* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; }
-body { background: var(--bg); color: var(--text); font-family: "Georgia","Songti SC","SimSun",serif; transition: background 0.3s, color 0.3s; }
-.page { position: fixed; inset: 0; display: flex; flex-direction: column; }
-.hidden { display: none !important; }
+[data-theme="night"]{--bg:#0e0d0a;--surface:#1a1814;--surface2:#222018;--text:#d5c9b5;--text-dim:#665e50;--accent:#c49a6c;--accent-light:#8b5e3c;--border:#2a2820;--shadow:rgba(0,0,0,.6);}
+[data-theme="eye"]{--bg:#ccd9b8;--surface:#bfcfaa;--surface2:#b2c49c;--text:#182810;--text-dim:#426030;--accent:#3a6820;--accent-light:#5a9040;--border:#a0bc88;--shadow:rgba(20,40,10,.12);}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;}
+body{background:var(--bg);color:var(--text);font-family:'Noto Serif TC',serif;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s;}
+.page{position:fixed;inset:0;display:flex;flex-direction:column;}
+.page.hidden{display:none;}
 
-/* 書庫 */
-#page-lib { background: var(–bg); }
-.lib-header { padding: calc(var(–safe-top) + 16px) 20px 14px; background: var(–surface); border-bottom: 1px solid var(–border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
-.lib-title { font-size: 22px; font-weight: 700; letter-spacing: 4px; color: var(–accent); }
-.lib-version { font-size: 10px; color: var(–text-dim); margin-left: 6px; font-weight: 400; letter-spacing: 0; }
-.hdr-btn { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(–border); background: var(–surface2); color: var(–text); font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-.lib-body { flex: 1; overflow-y: auto; padding: 20px 16px calc(var(–safe-bot) + 20px); -webkit-overflow-scrolling: touch; }
+/* ══ LIBRARY ══ */
+.lib-hd{display:flex;align-items:center;padding:calc(var(–safe-top)+14px) 16px 12px;background:var(–surface);border-bottom:1px solid var(–border);gap:10px;flex-shrink:0;}
+.lib-title{flex:1;font-size:20px;font-weight:500;letter-spacing:3px;color:var(–accent);}
+.icon-btn{width:40px;height:40px;border-radius:12px;border:none;background:transparent;color:var(–text-dim);font-size:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.icon-btn:active{background:var(–surface2);}
+.search-bar{padding:10px 16px;background:var(–surface);border-bottom:1px solid var(–border);flex-shrink:0;}
+.search-inner{display:flex;align-items:center;background:var(–bg);border:1px solid var(–border);border-radius:10px;padding:8px 12px;gap:8px;}
+.search-inner input{flex:1;border:none;background:transparent;color:var(–text);font-size:15px;font-family:inherit;outline:none;}
+.search-inner input::placeholder{color:var(–text-dim);}
+.s-clr{font-size:14px;color:var(–text-dim);cursor:pointer;display:none;padding:2px 6px;}
+.lib-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+.add-row{display:flex;align-items:center;gap:14px;padding:14px 16px;border-bottom:1px solid var(–border);cursor:pointer;background:var(–surface);}
+.add-row:active{background:var(–surface2);}
+.add-thumb{width:44px;height:58px;border-radius:8px;border:2px dashed var(–border);background:var(–bg);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.add-label{font-size:14px;color:var(–accent);font-weight:500;}
+.add-sub{font-size:12px;color:var(–text-dim);margin-top:3px;}
+.book-row{display:flex;align-items:center;gap:14px;padding:12px 16px;border-bottom:1px solid var(–border);cursor:pointer;}
+.book-row:active{background:var(–surface2);}
+.b-thumb{width:44px;height:58px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:1px 2px 6px var(–shadow);}
+.b-info{flex:1;min-width:0;}
+.b-title{font-size:15px;font-weight:500;color:var(–text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:3px;}
+.b-meta{font-size:12px;color:var(–text-dim);}
+.empty-lib{display:none;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px;gap:14px;text-align:center;}
+.empty-lib .ei{font-size:52px;opacity:.35;}
+.empty-lib .et{font-size:15px;color:var(–text-dim);letter-spacing:1px;}
+.no-result{display:none;padding:30px;text-align:center;color:var(–text-dim);font-size:14px;}
 
-/* 匯入卡 */
-.import-card { background: var(–surface); border: 2px dashed var(–border); border-radius: 18px; padding: 28px 20px; text-align: center; cursor: pointer; margin-bottom: 24px; transition: border-color 0.2s, background 0.2s; }
-.import-card:active { background: var(–surface2); border-color: var(–accent2); }
-.import-icon { font-size: 36px; margin-bottom: 8px; }
-.import-label { font-size: 16px; font-weight: 600; color: var(–accent); letter-spacing: 1px; }
-.import-sub { font-size: 12px; color: var(–text-dim); margin-top: 4px; }
+/* ══ READER ══ */
+#page-reader{background:var(–bg);}
+.r-topbar{position:absolute;top:0;left:0;right:0;z-index:20;display:flex;align-items:center;
+padding:calc(var(–safe-top)+10px) 14px 10px;background:var(–surface);
+border-bottom:1px solid var(–border);gap:8px;transition:transform .28s,opacity .28s;}
+.r-topbar.ui-hide{transform:translateY(-110%);opacity:0;pointer-events:none;}
+.r-book-title{flex:1;font-size:15px;font-weight:500;color:var(–text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.r-toolbar{position:absolute;bottom:0;left:0;right:0;z-index:20;background:var(–surface);
+border-top:1px solid var(–border);padding:6px 0 calc(var(–safe-bottom)+6px);
+display:flex;align-items:center;justify-content:space-around;transition:transform .28s,opacity .28s;}
+.r-toolbar.ui-hide{transform:translateY(110%);opacity:0;pointer-events:none;}
+.tb-btn{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 10px;
+border:none;background:transparent;color:var(–text-dim);cursor:pointer;border-radius:10px;font-size:11px;min-width:44px;}
+.tb-btn:active{background:var(–surface2);}
+.tb-btn .tbi{font-size:20px;line-height:1.2;}
+.tb-btn.active,.tb-btn.active .tbi{color:var(–accent);}
 
-/* 宮格 */
-.section-title { font-size: 12px; color: var(–text-dim); letter-spacing: 2px; margin-bottom: 14px; padding-left: 2px; }
-.book-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; width: 100%; }
-.book-cell { cursor: pointer; user-select: none; min-width: 0; }
-.book-cover { aspect-ratio: 3/4; border-radius: 10px; background: var(–surface); border: 1px solid var(–border); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px 8px 10px 14px; position: relative; overflow: hidden; transition: transform 0.15s; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-.book-cell:active .book-cover { transform: scale(0.96); }
-.book-cover-spine { position: absolute; left: 0; top: 0; bottom: 0; width: 6px; border-radius: 10px 0 0 10px; }
-.book-cover-title { font-size: 13px; font-weight: 700; text-align: center; color: var(–text); line-height: 1.4; word-break: break-all; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; padding-left: 8px; }
-.book-cover-prog { position: absolute; bottom: 6px; right: 8px; font-size: 10px; color: var(–text-dim); }
-.book-cover-new { position: absolute; top: 6px; right: 6px; background: var(–accent); color: #fff; font-size: 9px; padding: 1px 5px; border-radius: 6px; }
-.book-name { font-size: 12px; text-align: center; margin-top: 7px; color: var(–text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%; }
-.empty-lib { text-align: center; padding: 60px 20px; color: var(–text-dim); }
-.empty-lib .ei { font-size: 48px; margin-bottom: 12px; }
-.empty-lib .et { font-size: 14px; letter-spacing: 2px; }
+/* ══ FLIP ══ */
+.r-flip{position:absolute;inset:0;display:flex;flex-direction:column;}
+.flip-zones{position:absolute;inset:0;z-index:10;display:flex;}
+.fz-l{flex:0 0 28%;height:100%;cursor:pointer;}
+.fz-m{flex:1;height:100%;cursor:pointer;}
+.fz-r{flex:0 0 28%;height:100%;cursor:pointer;}
 
-/* 閱讀器 */
-#page-reader { background: var(–bg); overflow: hidden; }
+/*
 
-/* 翻頁 - 全螢幕 */
-.flip-viewport { position: absolute; inset: 0; overflow: hidden; }
-.flip-canvas { position: absolute; top: 0; bottom: 0; left: 0; display: flex; transition: transform 0.3s cubic-bezier(0.4,0,0.2,1); will-change: transform; }
-.flip-page { width: 100vw; height: 100vh; flex-shrink: 0; overflow: hidden; display: flex; flex-direction: column; padding: calc(var(–safe-top) + 52px) 22px calc(var(–safe-bot) + 36px); }
-.flip-page-text { flex: 1; overflow: hidden; line-height: 2; color: var(–text); white-space: pre-wrap; word-break: break-all; }
+- flip-text: 精確分頁的關鍵 CSS
+- padding: top 20px, sides 22px, bottom 10px — 與 JS 計算必須一致
+- overflow: hidden — 電子書式，超出部分截斷
+- line-height 在 JS 中動態設定
+  */
+  .flip-text{
+  flex:1;
+  overflow:hidden;
+  padding:20px 22px 10px;
+  color:var(–text);
+  }
+  .flip-text p{
+  margin-bottom:.5em;   /* = 0.5 × fontSize，JS 計算時納入 */
+  text-indent:2em;
+  word-break:break-all;
+  }
+  .flip-text .ch-h{
+  font-weight:500;
+  color:var(–accent);
+  text-indent:0;
+  margin:1em 0 .8em;   /* top=1em, bottom=0.8em，JS 計算時納入 */
+  padding-left:12px;
+  border-left:3px solid var(–accent);
+  }
+  .flip-prog-bar{height:2px;background:var(–surface2);flex-shrink:0;}
+  .flip-prog-fill{height:100%;background:var(–accent);transition:width .3s;}
+  .flip-footer{flex-shrink:0;padding:4px 20px calc(var(–safe-bottom)+2px);display:flex;align-items:center;justify-content:space-between;}
+  .flip-pnum{font-size:12px;color:var(–text-dim);}
 
-/* 頁碼 - 底部中央小字，常駐顯示 */
-.r-page-indicator { position: absolute; bottom: calc(var(–safe-bot) + 10px); left: 0; right: 0; text-align: center; font-size: 11px; color: var(–text-dim); pointer-events: none; z-index: 10; opacity: 0.6; }
-
-/* 頂部浮動工具列 */
-.r-topbar { position: absolute; top: 0; left: 0; right: 0; padding: calc(var(–safe-top) + 8px) 16px 10px; background: rgba(250,248,243,0.95); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(–border); display: flex; align-items: center; gap: 10px; z-index: 100; transition: transform 0.25s, opacity 0.25s; }
-[data-night] .r-topbar { background: rgba(36,34,40,0.95); }
-.r-topbar.hidden-ui { transform: translateY(-100%); opacity: 0; pointer-events: none; }
-.r-back { width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(–border); background: var(–surface2); color: var(–text); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.r-title { flex: 1; font-size: 15px; font-weight: 600; color: var(–text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: center; }
-.r-toc-btn { width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(–border); background: var(–surface2); color: var(–text); font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-
-/* 底部浮動工具列 */
-.r-botbar { position: absolute; bottom: 0; left: 0; right: 0; padding: 12px 20px calc(var(–safe-bot) + 12px); background: rgba(250,248,243,0.95); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-top: 1px solid var(–border); z-index: 100; transition: transform 0.25s, opacity 0.25s; }
-[data-night] .r-botbar { background: rgba(36,34,40,0.95); }
-.r-botbar.hidden-ui { transform: translateY(100%); opacity: 0; pointer-events: none; }
-.r-tools { display: flex; justify-content: space-around; align-items: center; }
-.r-tool-btn { display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; padding: 6px 14px; border-radius: 10px; border: none; background: none; color: var(–text); transition: background 0.15s; }
-.r-tool-btn:active { background: var(–surface2); }
-.r-tool-icon { font-size: 22px; }
-.r-tool-label { font-size: 10px; color: var(–text-dim); }
-
-/* 熱區 */
-.tap-zone { position: absolute; top: 0; height: 100%; z-index: 50; }
-#tap-prev { left: 0; width: 30%; }
-#tap-mid  { left: 30%; width: 40%; }
-#tap-next { right: 0; width: 30%; }
-
-/* 目錄 */
-.toc-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 200; opacity: 0; pointer-events: none; transition: opacity 0.25s; }
-.toc-overlay.open { opacity: 1; pointer-events: auto; }
-.toc-panel { position: fixed; top: 0; left: -100%; bottom: 0; width: 82%; max-width: 320px; background: var(–surface); z-index: 201; transition: left 0.28s cubic-bezier(0.4,0,0.2,1); display: flex; flex-direction: column; box-shadow: 4px 0 24px rgba(0,0,0,0.15); }
-.toc-panel.open { left: 0; }
-.toc-header { padding: calc(var(–safe-top) + 16px) 20px 14px; border-bottom: 1px solid var(–border); font-size: 16px; font-weight: 700; color: var(–accent); letter-spacing: 2px; flex-shrink: 0; }
-.toc-list { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
-.toc-item { padding: 14px 20px; border-bottom: 1px solid var(–border); font-size: 14px; color: var(–text); cursor: pointer; transition: background 0.15s; }
-.toc-item:active { background: var(–surface2); }
-.toc-item.active { color: var(–accent); font-weight: 600; }
-
-/* 字級面板 */
-.bottom-sheet { position: fixed; bottom: 0; left: 0; right: 0; background: var(–surface); border-top: 1px solid var(–border); border-radius: 20px 20px 0 0; padding: 20px 24px calc(var(–safe-bot) + 20px); z-index: 300; transform: translateY(100%); transition: transform 0.28s cubic-bezier(0.4,0,0.2,1); }
-.bottom-sheet.open { transform: translateY(0); }
-.sheet-title { font-size: 13px; color: var(–text-dim); letter-spacing: 2px; margin-bottom: 16px; text-align: center; }
-.size-row { display: flex; align-items: center; gap: 16px; justify-content: center; }
-.size-btn { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(–border); background: var(–surface2); font-size: 20px; cursor: pointer; color: var(–text); display: flex; align-items: center; justify-content: center; }
-.size-btn:active { background: var(–border); }
-.size-display { font-size: 18px; font-weight: 600; color: var(–text); min-width: 60px; text-align: center; }
-
-/* 刪除確認 */
-.confirm-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 500; display: flex; align-items: flex-end; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
-.confirm-overlay.open { opacity: 1; pointer-events: auto; }
-.confirm-sheet { background: var(–surface); border-radius: 20px 20px 0 0; width: 100%; padding: 20px 20px calc(var(–safe-bot) + 16px); transform: translateY(100%); transition: transform 0.28s cubic-bezier(0.4,0,0.2,1); }
-.confirm-overlay.open .confirm-sheet { transform: translateY(0); }
-.confirm-title { font-size: 15px; font-weight: 600; color: var(–text); margin-bottom: 6px; }
-.confirm-sub { font-size: 13px; color: var(–text-dim); margin-bottom: 20px; }
-.confirm-btns { display: flex; gap: 10px; }
-.confirm-btn { flex: 1; padding: 14px; border-radius: 14px; border: none; font-size: 15px; font-weight: 600; cursor: pointer; }
-.confirm-cancel { background: var(–surface2); color: var(–text); }
-.confirm-del { background: #ff3b30; color: white; }
-
-/* Toast */
-.toast { position: fixed; bottom: calc(var(–safe-bot) + 100px); left: 50%; transform: translateX(-50%) translateY(20px); background: rgba(30,28,26,0.88); color: #fff; padding: 10px 20px; border-radius: 20px; font-size: 14px; z-index: 1000; opacity: 0; transition: opacity 0.2s, transform 0.2s; pointer-events: none; white-space: nowrap; }
-.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+/* ══ PANELS ══ */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:50;opacity:0;pointer-events:none;transition:opacity .28s;}
+.overlay.open{opacity:1;pointer-events:auto;}
+.panel{position:fixed;bottom:0;left:0;right:0;background:var(–surface);border-radius:20px 20px 0 0;
+z-index:51;transform:translateY(100%);transition:transform .32s cubic-bezier(.4,0,.2,1);
+max-height:82vh;display:flex;flex-direction:column;padding-bottom:var(–safe-bottom);}
+.panel.open{transform:translateY(0);}
+.panel-handle{width:36px;height:4px;background:var(–border);border-radius:2px;margin:12px auto 0;flex-shrink:0;}
+.panel-title{font-size:15px;font-weight:500;letter-spacing:2px;color:var(–text);
+padding:14px 20px 12px;border-bottom:1px solid var(–border);flex-shrink:0;
+display:flex;align-items:center;justify-content:space-between;}
+.panel-close{font-size:18px;color:var(–text-dim);cursor:pointer;padding:0 4px;}
+.panel-body{flex:1;overflow-y:auto;padding:16px;-webkit-overflow-scrolling:touch;}
+.srow{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(–border);gap:12px;}
+.srow:last-child{border-bottom:none;}
+.slabel{font-size:14px;color:var(–text-dim);white-space:nowrap;}
+.btnrow{display:flex;gap:6px;flex-wrap:wrap;}
+.cbtn{padding:6px 14px;border-radius:20px;border:1px solid var(–border);background:transparent;color:var(–text-dim);font-size:13px;font-family:inherit;cursor:pointer;transition:all .15s;}
+.cbtn.active{background:var(–accent);border-color:var(–accent);color:#fff;}
+.szctrl{display:flex;align-items:center;gap:10px;}
+.szval{font-size:13px;color:var(–text);width:28px;text-align:center;}
+.szbtn{width:32px;height:32px;border-radius:50%;border:1px solid var(–border);background:var(–surface2);color:var(–text);font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.tts-cur{font-size:13px;color:var(–text-dim);text-align:center;padding:4px 0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-height:20px;}
+.tts-ctrl{display:flex;align-items:center;gap:12px;justify-content:center;padding:12px 0;}
+.tts-cb{width:52px;height:52px;border-radius:50%;border:none;background:var(–surface2);color:var(–text-dim);font-size:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.tts-cb.play{width:64px;height:64px;background:var(–accent);color:#fff;font-size:26px;}
+.tts-cb:active{opacity:.7;}
+.timer-disp{font-size:26px;font-weight:300;color:var(–accent);letter-spacing:3px;text-align:center;padding:6px 0;}
+.timer-slider{width:100%;accent-color:var(–accent);cursor:pointer;margin:4px 0;}
+.timer-labels{display:flex;justify-content:space-between;font-size:11px;color:var(–text-dim);margin-bottom:8px;}
+.ch-item{padding:13px 4px 13px 12px;border-bottom:1px solid var(–border);font-size:14px;color:var(–text-dim);cursor:pointer;border-left:3px solid transparent;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.ch-item:active{background:var(–surface2);}
+.ch-item.active{color:var(–accent);border-left-color:var(–accent);}
+.bm-row{display:flex;align-items:center;justify-content:space-between;padding:12px 4px;border-bottom:1px solid var(–border);gap:10px;}
+.bm-row:last-child{border-bottom:none;}
+.bm-info{flex:1;cursor:pointer;}
+.bm-prev{font-size:13px;color:var(–text);margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.bm-meta{font-size:11px;color:var(–text-dim);}
+.bm-del{font-size:16px;background:none;border:none;cursor:pointer;color:var(–text-dim);padding:4px 8px;}
+.toast{position:fixed;bottom:calc(var(–safe-bottom)+100px);left:50%;transform:translateX(-50%) translateY(14px);background:rgba(0,0,0,.78);color:#fff;padding:10px 22px;border-radius:22px;font-size:14px;opacity:0;transition:opacity .22s,transform .22s;z-index:200;white-space:nowrap;pointer-events:none;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-thumb{background:var(–border);border-radius:10px;}
 </style>
 
 </head>
-<body>
+<body data-theme="day">
 
-<!-- 書庫 -->
+<!-- ══ LIBRARY ══ -->
 
-<div class="page" id="page-lib">
-  <div class="lib-header">
-    <div>
-      <span class="lib-title">書　卷</span>
-      <span class="lib-version">v2.0.2</span>
+<div class="page" id="page-library">
+  <div class="lib-hd">
+    <div class="lib-title">書　卷</div>
+    <button class="icon-btn" id="upload-btn" title="匯入">＋</button>
+  </div>
+  <div class="search-bar">
+    <div class="search-inner">
+      <span style="font-size:15px;color:var(--text-dim)">🔍</span>
+      <input type="text" id="search-input" placeholder="搜尋書名…" oninput="filterBooks(this.value)">
+      <span class="s-clr" id="s-clr" onclick="clearSearch()">✕</span>
     </div>
-    <button class="hdr-btn" id="night-btn" onclick="toggleNight()">🌙</button>
   </div>
   <div class="lib-body">
-    <div class="import-card" id="import-card">
-      <div class="import-icon">📄</div>
-      <div class="import-label">匯入 TXT 小說</div>
-      <div class="import-sub">點擊選擇檔案</div>
+    <div class="add-row" id="add-row">
+      <div class="add-thumb">📄</div>
+      <div><div class="add-label">匯入 TXT 小說</div><div class="add-sub">點擊選擇檔案</div></div>
     </div>
-    <input type="file" id="file-input" accept=".txt" style="display:none">
-    <div id="book-section" class="hidden">
-      <div class="section-title">我的書庫</div>
-      <div class="book-grid" id="book-grid"></div>
-    </div>
-    <div class="empty-lib" id="empty-lib">
-      <div class="ei">📚</div>
-      <div class="et">書庫空空如也</div>
-    </div>
+    <div id="book-list"></div>
+    <div class="empty-lib" id="empty-lib"><div class="ei">📚</div><div class="et">書庫空空如也</div></div>
+    <div class="no-result" id="no-result">找不到符合的書籍</div>
   </div>
+  <input type="file" id="file-input" accept=".txt" style="display:none">
 </div>
 
-<!-- 閱讀器 -->
+<!-- ══ READER ══ -->
 
 <div class="page hidden" id="page-reader">
-  <div class="tap-zone" id="tap-prev"></div>
-  <div class="tap-zone" id="tap-mid"></div>
-  <div class="tap-zone" id="tap-next"></div>
-  <div class="flip-viewport" id="flip-viewport">
-    <div class="flip-canvas" id="flip-canvas"></div>
+  <div class="r-topbar ui-hide" id="r-topbar">
+    <button class="icon-btn" onclick="goLibrary()">‹</button>
+    <div class="r-book-title" id="r-title"></div>
+    <button class="icon-btn" onclick="openPanel('panel-chapters')">☰</button>
   </div>
-  <div class="r-topbar hidden-ui" id="r-topbar">
-    <button class="r-back" onclick="closeReader()">‹</button>
-    <div class="r-title" id="r-title">書名</div>
-    <button class="r-toc-btn" onclick="openTOC()">☰</button>
+  <div class="r-flip" id="r-flip">
+    <div class="flip-zones">
+      <div class="fz-l" onclick="flipPrev()"></div>
+      <div class="fz-m" onclick="toggleUI()"></div>
+      <div class="fz-r" onclick="flipNext()"></div>
+    </div>
+    <div class="flip-text" id="flip-text"></div>
+    <div class="flip-prog-bar"><div class="flip-prog-fill" id="flip-prog-fill" style="width:0%"></div></div>
+    <div class="flip-footer">
+      <div class="flip-pnum" id="flip-pnum">1 / 1</div>
+      <div class="flip-pnum" id="flip-pct">0%</div>
+    </div>
   </div>
-  <div class="r-botbar hidden-ui" id="r-botbar">
-    <div class="r-page-info" id="r-page-info">第 1 頁</div>
-    <div class="r-tools">
-      <button class="r-tool-btn" onclick="openSizePanel()">
-        <span class="r-tool-icon">文</span>
-        <span class="r-tool-label">字級</span>
-      </button>
-      <button class="r-tool-btn" onclick="toggleNight()">
-        <span class="r-tool-icon" id="r-night-icon">🌙</span>
-        <span class="r-tool-label">主題</span>
-      </button>
+  <div class="r-toolbar ui-hide" id="r-toolbar">
+    <button class="tb-btn" onclick="doAddBookmark()"><span class="tbi">🔖</span><span>書籤</span></button>
+    <button class="tb-btn" onclick="openPanel('panel-bookmarks')"><span class="tbi">📋</span><span>記錄</span></button>
+    <button class="tb-btn" onclick="openPanel('panel-tts')"><span class="tbi">🎧</span><span>聽書</span></button>
+    <button class="tb-btn" id="tb-conv" onclick="toggleConvert()"><span class="tbi" id="conv-icon">簡</span><span id="conv-lbl">簡→繁</span></button>
+    <button class="tb-btn" onclick="openPanel('panel-settings')"><span class="tbi">⚙️</span><span>設定</span></button>
+  </div>
+</div>
+
+<!-- ══ PANELS ══ -->
+
+<div class="overlay" id="overlay" onclick="closeAllPanels()"></div>
+
+<div class="panel" id="panel-chapters">
+  <div class="panel-handle"></div>
+  <div class="panel-title">目　錄<span class="panel-close" onclick="closeAllPanels()">✕</span></div>
+  <div class="panel-body"><div id="chapter-list"></div></div>
+</div>
+
+<div class="panel" id="panel-bookmarks">
+  <div class="panel-handle"></div>
+  <div class="panel-title">書　籤<span class="panel-close" onclick="closeAllPanels()">✕</span></div>
+  <div class="panel-body"><div id="bookmark-list"></div></div>
+</div>
+
+<div class="panel" id="panel-tts">
+  <div class="panel-handle"></div>
+  <div class="panel-title">聽　書<span class="panel-close" onclick="closeAllPanels()">✕</span></div>
+  <div class="panel-body">
+    <div class="tts-cur" id="tts-cur">點擊播放開始聽書</div>
+    <div class="tts-ctrl">
+      <button class="tts-cb" onclick="ttsPrev()">⏮</button>
+      <button class="tts-cb play" id="tts-play-btn" onclick="toggleTTS()">▶</button>
+      <button class="tts-cb" onclick="ttsNext()">⏭</button>
+    </div>
+    <div class="srow">
+      <div class="slabel">速度</div>
+      <div class="btnrow">
+        <button class="cbtn" data-spd="0.7" onclick="setSpeed(0.7)">0.7×</button>
+        <button class="cbtn active" data-spd="1.0" onclick="setSpeed(1.0)">1.0×</button>
+        <button class="cbtn" data-spd="1.25" onclick="setSpeed(1.25)">1.25×</button>
+        <button class="cbtn" data-spd="1.5" onclick="setSpeed(1.5)">1.5×</button>
+        <button class="cbtn" data-spd="1.75" onclick="setSpeed(1.75)">1.75×</button>
+        <button class="cbtn" data-spd="2.0" onclick="setSpeed(2.0)">2.0×</button>
+      </div>
+    </div>
+    <div class="srow" style="flex-direction:column;align-items:stretch;gap:8px;">
+      <div class="slabel">定時關閉</div>
+      <div class="timer-disp" id="timer-disp">未啟動</div>
+      <input type="range" class="timer-slider" id="timer-slider" min="1" max="20" value="10" oninput="previewTimer(this.value)">
+      <div class="timer-labels"><span>1分</span><span>10分</span><span>20分</span></div>
+      <div style="display:flex;gap:8px;justify-content:center;">
+        <button class="cbtn" onclick="startTimer()">啟動定時</button>
+        <button class="cbtn" id="timer-cancel" style="display:none" onclick="cancelTimer()">取消定時</button>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- 目錄 -->
-
-<div class="toc-overlay" id="toc-overlay" onclick="closeTOC()"></div>
-<div class="toc-panel" id="toc-panel">
-  <div class="toc-header">章節目錄</div>
-  <div class="toc-list" id="toc-list"></div>
-</div>
-
-<!-- 字級面板 -->
-
-<div class="bottom-sheet" id="size-panel" onclick="if(event.target===this)closeSizePanel()">
-  <div class="sheet-title">字　級</div>
-  <div class="size-row">
-    <button class="size-btn" onclick="adjFontSize(-1)">−</button>
-    <div class="size-display" id="size-display">20px</div>
-    <button class="size-btn" onclick="adjFontSize(1)">＋</button>
-  </div>
-</div>
-
-<!-- 刪除確認 -->
-
-<div class="confirm-overlay" id="confirm-overlay" onclick="if(event.target===this)closeConfirm()">
-  <div class="confirm-sheet">
-    <div class="confirm-title">刪除書籍</div>
-    <div class="confirm-sub" id="confirm-sub">確定要刪除這本書嗎？</div>
-    <div class="confirm-btns">
-      <button class="confirm-btn confirm-cancel" onclick="closeConfirm()">取消</button>
-      <button class="confirm-btn confirm-del" onclick="confirmDelete()">刪除</button>
+<div class="panel" id="panel-settings">
+  <div class="panel-handle"></div>
+  <div class="panel-title">閱讀設定<span class="panel-close" onclick="closeAllPanels()">✕</span></div>
+  <div class="panel-body">
+    <div class="srow">
+      <div class="slabel">主題</div>
+      <div class="btnrow">
+        <button class="cbtn active" data-theme-btn="day" onclick="setTheme('day')">日間</button>
+        <button class="cbtn" data-theme-btn="night" onclick="setTheme('night')">夜間</button>
+        <button class="cbtn" data-theme-btn="eye" onclick="setTheme('eye')">護眼</button>
+      </div>
+    </div>
+    <div class="srow">
+      <div class="slabel">字體</div>
+      <div class="btnrow">
+        <button class="cbtn active" data-font-btn="serif" onclick="setFont('serif')">宋體</button>
+        <button class="cbtn" data-font-btn="sans" onclick="setFont('sans')">黑體</button>
+      </div>
+    </div>
+    <div class="srow">
+      <div class="slabel">字體大小</div>
+      <div class="szctrl">
+        <button class="szbtn" onclick="changeFontSize(-1)">−</button>
+        <div class="szval" id="font-size-val">18</div>
+        <button class="szbtn" onclick="changeFontSize(1)">＋</button>
+      </div>
+    </div>
+    <div class="srow">
+      <div class="slabel">行距</div>
+      <div class="btnrow">
+        <button class="cbtn" data-lh="1.6" onclick="setLH(1.6)">緊</button>
+        <button class="cbtn active" data-lh="2.0" onclick="setLH(2.0)">標準</button>
+        <button class="cbtn" data-lh="2.6" onclick="setLH(2.6)">寬</button>
+      </div>
     </div>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
+<!-- OpenCC 簡繁轉換 -->
+
+<script src="https://cdn.jsdelivr.net/npm/opencc-js@1.0.5/dist/umd/full.js"></script>
+
 <script>
-const DB_NAME = 'shujuan2', DB_VER = 1;
-const SPINE_COLORS = ['#c47a5a','#7a8c5a','#5a7a8c','#8c5a7a','#7a6e5a','#5a8c7a','#8c7a5a'];
-const PAGE_CHARS = 600;
+'use strict';
 
-let _db = null, _books = [], _cur = null;
-let _uiVisible = false, _deleteId = null;
-let _fontSize = 20, _isNight = false;
-let _longPressTimer = null;
-let _touchStartX = 0, _touchStartY = 0;
-
-// ── DB ──
-function openDB() {
-  return new Promise((res, rej) => {
-    if (_db) return res(_db);
-    const r = indexedDB.open(DB_NAME, DB_VER);
-    r.onupgradeneeded = e => {
-      const d = e.target.result;
-      if (!d.objectStoreNames.contains('books')) d.createObjectStore('books', { keyPath: 'id', autoIncrement: true });
-      if (!d.objectStoreNames.contains('settings')) d.createObjectStore('settings', { keyPath: 'key' });
+// ══════════════════════════════════════════
+// DB
+// ══════════════════════════════════════════
+const DB_NAME='ShujuanDB',DB_VER=2;
+let _db;
+function openDB(){
+  return new Promise((res,rej)=>{
+    if(_db)return res(_db);
+    const r=indexedDB.open(DB_NAME,DB_VER);
+    r.onupgradeneeded=e=>{
+      const d=e.target.result;
+      if(!d.objectStoreNames.contains('books')){
+        const bs=d.createObjectStore('books',{keyPath:'id',autoIncrement:true});
+        bs.createIndex('lastRead','lastRead');
+      }
+      if(!d.objectStoreNames.contains('settings'))
+        d.createObjectStore('settings',{keyPath:'key'});
+      if(!d.objectStoreNames.contains('bms')){
+        const bms=d.createObjectStore('bms',{keyPath:'id',autoIncrement:true});
+        bms.createIndex('bookId','bookId');
+      }
     };
-    r.onsuccess = e => { _db = e.target.result; res(_db); };
-    r.onerror = rej;
+    r.onsuccess=e=>{_db=e.target.result;res(_db);};
+    r.onerror=e=>rej(e);
   });
 }
-async function dbOp(store, mode, fn) {
-  const d = await openDB();
+async function dbOp(store,mode,fn){const d=await openDB();return new Promise((res,rej)=>{const s=d.transaction(store,mode).objectStore(store);const r=fn(s);if(r){r.onsuccess=()=>res(r.result);r.onerror=rej;}else res();});}
+const dbPut=(st,o)=>dbOp(st,'readwrite',s=>s.put(o));
+const dbGet=(st,k)=>dbOp(st,'readonly',s=>s.get(k));
+const dbDel=(st,k)=>dbOp(st,'readwrite',s=>s.delete(k));
+const dbAll=(st)=>dbOp(st,'readonly',s=>s.getAll());
+async function dbIdx(st,ix,k){const d=await openDB();return new Promise((res,rej)=>{const r=d.transaction(st,'readonly').objectStore(st).index(ix).getAll(k);r.onsuccess=()=>res(r.result);r.onerror=rej;});}
+
+// ══════════════════════════════════════════
+// SETTINGS
+// ══════════════════════════════════════════
+const DEF_S={fontSize:18,lineHeight:2,font:'serif',theme:'day'};
+async function loadS(){const r=await dbGet('settings','app');return r?{...DEF_S,...r.value}:{...DEF_S};}
+async function saveS(){await dbPut('settings',{key:'app',value:App.s});}
+
+// ══════════════════════════════════════════
+// OpenCC 簡→繁轉換
+// 使用 opencc-js，支援語境判斷（发/髮、后/後 等歧義字）
+// ══════════════════════════════════════════
+let _openccConverter = null;
+
+function _initOpenCC() {
+  try {
+    if (typeof OpenCC !== 'undefined') {
+      _openccConverter = OpenCC.Converter({ from: 'cn', to: 'twp' });
+    }
+  } catch(e) {
+    console.warn('OpenCC 初始化失敗，降級使用基本轉換', e);
+    _openccConverter = null;
+  }
+}
+
+function s2t(str) {
+  if (_openccConverter) {
+    try { return _openccConverter(str); } catch(e) {}
+  }
+  // 降級：基本常用字對照（OpenCC 載入失敗時備用）
+  const MAP={"万":"萬","与":"與","专":"專","业":"業","东":"東","乱":"亂","云":"雲","产":"產","亲":"親","从":"從","会":"會","传":"傳","体":"體","关":"關","兴":"興","农":"農","决":"決","净":"淨","击":"擊","动":"動","区":"區","医":"醫","单":"單","历":"歷","发":"發","号":"號","听":"聽","响":"響","国":"國","图":"圖","圆":"圓","坏":"壞","块":"塊","备":"備","变":"變","夺":"奪","学":"學","宝":"寶","实":"實","审":"審","导":"導","将":"將","层":"層","属":"屬","岁":"歲","岛":"島","师":"師","帅":"帥","带":"帶","广":"廣","废":"廢","张":"張","态":"態","护":"護","报":"報","数":"數","时":"時","样":"樣","树":"樹","楼":"樓","桥":"橋","梦":"夢","机":"機","来":"來","气":"氣","汉":"漢","温":"溫","满":"滿","热":"熱","现":"現","环":"環","获":"獲","独":"獨","责":"責","资":"資","边":"邊","达":"達","过":"過","运":"運","还":"還","这":"這","进":"進","远":"遠","连":"連","选":"選","违":"違","遗":"遺","钟":"鐘","钱":"錢","银":"銀","铁":"鐵","铜":"銅","长":"長","门":"門","开":"開","阳":"陽","阴":"陰","队":"隊","随":"隨","险":"險","难":"難","电":"電","风":"風","飞":"飛","饮":"飲","马":"馬","鱼":"魚","鸟":"鳥","龙":"龍","头":"頭","说":"說","请":"請","识":"識","军":"軍","转":"轉","声":"聲","读":"讀","写":"寫","词":"詞","几":"幾","后":"後","节":"節","艺":"藝","视":"視","观":"觀","让":"讓","认":"認","证":"證","话":"話","语":"語","线":"線","网":"網","场":"場","码":"碼","礼":"禮","红":"紅","经":"經","结":"結","统":"統","继":"繼","续":"續","维":"維","绿":"綠","编":"編","缩":"縮"};
+  let r='';for(const c of str)r+=MAP[c]||c;return r;
+}
+
+// ══════════════════════════════════════════
+// TTS
+// ══════════════════════════════════════════
+const synth=window.speechSynthesis;
+let _ttsOn=false,_ttsBusy=false,_ttsIdx=0,_ttsParas=[],_ttsSpeed=1.0;
+let _timerIv=null,_timerSecs=0,_timerPreview=10;
+
+function _bestVoice(){const vs=synth.getVoices();return vs.find(v=>v.lang==='zh-TW'&&v.localService)||vs.find(v=>v.lang.startsWith('zh')&&v.localService)||vs.find(v=>v.lang.startsWith('zh'))||null;}
+function _speak(idx){
+  if(!_ttsOn||idx>=_ttsParas.length){if(idx>=_ttsParas.length){_stopTTS();document.getElementById('tts-cur').textContent='朗讀完畢';}return;}
+  if(_ttsBusy)return;
+  _ttsBusy=true;synth.cancel();_ttsIdx=idx;
+  document.getElementById('tts-play-btn').textContent='⏸';
+  document.getElementById('tts-cur').textContent=_ttsParas[idx].substring(0,40)+(_ttsParas[idx].length>40?'…':'');
+  const u=new SpeechSynthesisUtterance(_ttsParas[idx]);
+  u.lang='zh-TW';u.rate=_ttsSpeed;
+  const v=_bestVoice();if(v)u.voice=v;
+  u.onstart=()=>{_ttsBusy=true;};
+  u.onend=()=>{_ttsBusy=false;if(_ttsOn)_speak(idx+1);};
+  u.onerror=()=>{_ttsBusy=false;if(_ttsOn)_speak(idx+1);};
+  setTimeout(()=>{if(_ttsOn)synth.speak(u);else _ttsBusy=false;},60);
+}
+function _stopTTS(){_ttsOn=false;_ttsBusy=false;synth.cancel();document.getElementById('tts-play-btn').textContent='▶';}
+function toggleTTS(){if(_ttsOn)_stopTTS();else{_ttsOn=true;_ttsBusy=false;_speak(_ttsIdx);}}
+function ttsPrev(){_ttsBusy=false;const i=Math.max(0,_ttsIdx-1);if(_ttsOn){_ttsOn=true;_speak(i);}else _ttsIdx=i;}
+function ttsNext(){_ttsBusy=false;if(_ttsOn){_ttsOn=true;_speak(_ttsIdx+1);}else _ttsIdx++;}
+function setSpeed(s){_ttsSpeed=s;document.querySelectorAll('[data-spd]').forEach(b=>b.classList.toggle('active',parseFloat(b.dataset.spd)===s));if(_ttsOn){_ttsBusy=false;_ttsOn=true;_speak(_ttsIdx);}}
+
+function previewTimer(v){_timerPreview=parseInt(v);document.getElementById('timer-disp').textContent=_timerIv?document.getElementById('timer-disp').textContent:String(_timerPreview).padStart(2,'0')+':00';}
+function startTimer(){
+  cancelTimer();_timerSecs=_timerPreview*60;
+  document.getElementById('timer-cancel').style.display='';
+  _timerIv=setInterval(()=>{
+    _timerSecs--;
+    const m=Math.floor(_timerSecs/60),s=_timerSecs%60;
+    document.getElementById('timer-disp').textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    if(_timerSecs<=0){cancelTimer();_stopTTS();showToast('⏰ 定時結束，聽書已停止');}
+  },1000);
+  showToast(`⏰ 定時 ${_timerPreview} 分鐘已啟動`);
+}
+function cancelTimer(){if(_timerIv){clearInterval(_timerIv);_timerIv=null;}document.getElementById('timer-disp').textContent='未啟動';document.getElementById('timer-cancel').style.display='none';}
+
+// ══════════════════════════════════════════
+// 章節偵測正則
+// 支援：第X章、====標題====、Chapter N、楔子、序章等
+// ══════════════════════════════════════════
+const CH_RE = /^(={2,}[^=\n]{1,40}={2,}|第\s*[零一二三四五六七八九十百千萬\d]{1,6}\s*[章節回卷部篇集話话](\s+\S.{0,40})?|Chapter\s*\d{1,4}(\s+\S.{0,40})?|[楔序][子章言](\s+\S.{0,20})?|[尾終][聲章](\s+\S.{0,20})?|番外(\s+\S.{0,20})?|外傳(\s+\S.{0,20})?|前言|後記|附錄)/i;
+
+// ══════════════════════════════════════════
+// FLIP — 精確分頁引擎 v2.0.9
+//
+// 設計原則：
+//   計算每一行在螢幕上佔用的「實際像素高度」，
+//   累加後超過可用空間就切頁，完全不使用魔法數字。
+//
+// CSS 對應（必須與此同步）：
+//   .flip-text padding: top=20px, bottom=10px
+//   p margin-bottom: 0.5em
+//   .ch-h margin: top=1em, bottom=0.8em
+//   line-height: 動態設定（App.s.lineHeight）
+// ══════════════════════════════════════════
+let _pages=[], _pidx=0, _lines=[];
+
+// 將文字解析成行陣列
+function _buildLines() {
+  _lines = [];
+  App.displayText.split('\n').forEach(line => {
+    const t = line.trim();
+    if (t) _lines.push({ t, h: CH_RE.test(t) && t.length < 60 });
+  });
+}
+
+// 計算每行的實際像素高度
+// isHeader: 章節標題有額外 margin
+function _lineHeight(isHeader) {
+  const fs = App.s.fontSize;
+  const lh = App.s.lineHeight;
+  const lineH = fs * lh;          // 一行文字高度（含行距）
+  const marginBottom = fs * 0.5;  // p { margin-bottom: .5em }
+
+  if (isHeader) {
+    // .ch-h { margin: 1em 0 .8em } — 上下 margin 各算一次
+    const marginTop = fs * 1.0;
+    const marginBot = fs * 0.8;
+    return marginTop + lineH + marginBot;
+  } else {
+    return lineH + marginBottom;
+  }
+}
+
+// 主分頁函式：精確計算，不用魔法數字
+function buildFlipPages() {
+  const el = document.getElementById('flip-text');
+  const containerH = el.clientHeight;
+  if (containerH < 50) { setTimeout(buildFlipPages, 120); return; }
+
+  // 可用高度 = 容器高度 - padding-top(20) - padding-bottom(10)
+  const availH = containerH - 20 - 10;
+
+  _pages = [];
+  let curPage = [];
+  let usedH = 0;
+
+  for (const line of _lines) {
+    const lh = _lineHeight(line.h);
+
+    // 若加入這行會超出，且目前頁面已有內容，先切頁
+    if (usedH + lh > availH && curPage.length > 0) {
+      _pages.push(curPage);
+      curPage = [];
+      usedH = 0;
+    }
+
+    // 單行超過整頁（極端情況），強制放入
+    curPage.push(line);
+    usedH += lh;
+  }
+
+  if (curPage.length > 0) _pages.push(curPage);
+  if (!_pages.length) _pages = [[{ t: '（無內容）', h: false }]];
+
+  const saved = _savedPageIdx || 0;
+  _pidx = Math.min(saved, _pages.length - 1);
+  _renderFlip();
+}
+
+function _applyFlipStyle() {
+  const el = document.getElementById('flip-text');
+  const ff = App.s.font === 'sans' ? "'Noto Sans TC',sans-serif" : "'Noto Serif TC',serif";
+  el.style.fontSize = App.s.fontSize + 'px';
+  el.style.lineHeight = App.s.lineHeight;
+  el.style.fontFamily = ff;
+}
+
+function _renderFlip() {
+  _applyFlipStyle();
+  const pg = _pages[_pidx] || [];
+  document.getElementById('flip-text').innerHTML = pg.map(l =>
+    l.h ? `<p class="ch-h">${esc(l.t)}</p>` : `<p>${esc(l.t)}</p>`
+  ).join('');
+  const tot = _pages.length;
+  const pct = tot > 1 ? Math.round(_pidx / (tot - 1) * 100) : 100;
+  document.getElementById('flip-pnum').textContent = `${_pidx + 1} / ${tot}`;
+  document.getElementById('flip-pct').textContent = `${pct}%`;
+  document.getElementById('flip-prog-fill').style.width = pct + '%';
+  _saveProgress(pct);
+}
+
+let _spT, _savedPageIdx = 0;
+function _saveProgress(pct) {
+  _savedPageIdx = _pidx;
+  clearTimeout(_spT);
+  _spT = setTimeout(async () => {
+    if (!App.bookId) return;
+    const b = await dbGet('books', App.bookId);
+    if (b) { b.progress = pct; b.pageIdx = _pidx; b.lastRead = Date.now(); await dbPut('books', b); }
+  }, 800);
+}
+
+function flipNext() { if (_pidx < _pages.length - 1) { _pidx++; _renderFlip(); } }
+function flipPrev() { if (_pidx > 0) { _pidx--; _renderFlip(); } }
+
+let _sx = null;
+function initSwipe() {
+  const f = document.getElementById('r-flip');
+  f.addEventListener('touchstart', e => { _sx = e.touches[0].clientX; }, { passive: true });
+  f.addEventListener('touchend', e => {
+    if (_sx === null) return;
+    const dx = e.changedTouches[0].clientX - _sx; _sx = null;
+    if (Math.abs(dx) > 55) { dx < 0 ? flipNext() : flipPrev(); }
+  }, { passive: true });
+}
+
+// ══════════════════════════════════════════
+// APP STATE
+// ══════════════════════════════════════════
+const App = { bookId: null, rawText: '', displayText: '', isConverted: false, s: { ...DEF_S }, chapters: [] };
+let _allBooks = [];
+
+let _uiOn = false;
+function toggleUI() { _uiOn = !_uiOn; _applyUI(); }
+function hideUI() { _uiOn = false; _applyUI(); }
+function _applyUI() {
+  document.getElementById('r-topbar').classList.toggle('ui-hide', !_uiOn);
+  document.getElementById('r-toolbar').classList.toggle('ui-hide', !_uiOn);
+}
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+async function init() {
+  App.s = await loadS();
+  applySettings();
+  _initOpenCC();
+  await renderLibrary();
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(() => {});
+  initSwipe();
+  previewTimer(10);
+
+  const fileInput = document.getElementById('file-input');
+  const triggerUpload = () => fileInput.click();
+  document.getElementById('upload-btn').addEventListener('click', triggerUpload);
+  document.getElementById('add-row').addEventListener('click', triggerUpload);
+  fileInput.addEventListener('change', async e => {
+    const f = e.target.files[0]; if (!f) return;
+    fileInput.value = '';
+    showToast('載入中…');
+    try {
+      const text = await readTxt(f);
+      const d = await openDB();
+      const id = await new Promise((res, rej) => {
+        const r = d.transaction('books', 'readwrite').objectStore('books')
+          .add({ title: f.name.replace(/\.txt$/i, ''), content: text, size: f.size,
+            addedAt: Date.now(), lastRead: Date.now(), progress: 0, pageIdx: 0 });
+        r.onsuccess = () => res(r.result); r.onerror = rej;
+      });
+      await renderLibrary(); showToast('✅ 匯入成功'); openBook(id);
+    } catch (err) { showToast('❌ 匯入失敗：' + err.message); }
+  });
+}
+
+function readTxt(f) {
   return new Promise((res, rej) => {
-    const t = d.transaction(store, mode).objectStore(store);
-    const r = fn(t);
-    if (r) { r.onsuccess = () => res(r.result); r.onerror = rej; } else res();
-  });
-}
-const dbAdd = (s,o) => dbOp(s,'readwrite',t=>t.add(o));
-const dbPut = (s,o) => dbOp(s,'readwrite',t=>t.put(o));
-const dbGet = (s,k) => dbOp(s,'readonly', t=>t.get(k));
-const dbDel = (s,k) => dbOp(s,'readwrite',t=>t.delete(k));
-const dbAll = (s)   => dbOp(s,'readonly', t=>t.getAll());
-
-// ── 設定 ──
-async function loadSettings() {
-  const s = await dbGet('settings','ui');
-  if (s) { _fontSize = s.fontSize||20; _isNight = s.isNight||false; }
-  applyNight();
-}
-async function saveSettings() {
-  await dbPut('settings',{key:'ui',fontSize:_fontSize,isNight:_isNight});
-}
-
-// ── 夜間 ──
-function toggleNight() {
-  _isNight = !_isNight; applyNight(); saveSettings();
-}
-function applyNight() {
-  document.body.toggleAttribute('data-night', _isNight);
-  document.getElementById('night-btn').textContent = _isNight ? '☀️' : '🌙';
-  document.getElementById('r-night-icon').textContent = _isNight ? '☀️' : '🌙';
-}
-
-// ── Toast ──
-let _toastT;
-function showToast(msg) {
-  const el = document.getElementById('toast');
-  el.textContent = msg; el.classList.add('show');
-  clearTimeout(_toastT); _toastT = setTimeout(()=>el.classList.remove('show'), 2200);
-}
-
-// ── 上傳 ──
-function readTxt(file) {
-  return new Promise((res,rej) => {
     const r = new FileReader();
     r.onload = e => {
       const t = e.target.result;
-      if ((t.match(/\uFFFD/g)||[]).length > 30) {
+      if ((t.match(/\uFFFD/g) || []).length > 50) {
         const r2 = new FileReader();
         r2.onload = e2 => res(e2.target.result);
         r2.onerror = rej;
-        r2.readAsText(file,'GBK');
+        r2.readAsText(f, 'GBK');
       } else res(t);
     };
     r.onerror = rej;
-    r.readAsText(file,'UTF-8');
+    r.readAsText(f, 'UTF-8');
   });
 }
-async function handleFile(input) {
-  const file = input.files[0]; if (!file) return;
-  const fname = file.name, fsize = file.size;
-  showToast('載入中…');
-  try {
-    const text = await readTxt(file);
-    input.value = '';
-    const id = await dbAdd('books',{
-      title: fname.replace(/\.txt$/i,''),
-      content: text, size: fsize,
-      addedAt: Date.now(), lastRead: Date.now(), pageIdx: 0
-    });
-    showToast('✅ 匯入成功');
-    await renderLibrary();
-    openBook(id);
-  } catch(err) {
-    input.value = '';
-    showToast('❌ '+(err&&err.message?err.message:String(err)));
-  }
-}
 
-// ── 書庫 ──
-function simpleHash(str) { let h=0; for (const c of str) h=(h*31+c.charCodeAt(0))>>>0; return h; }
-function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
+// ══════════════════════════════════════════
+// LIBRARY
+// ══════════════════════════════════════════
 async function renderLibrary() {
-  _books = await dbAll('books');
-  _books.sort((a,b)=>(b.lastRead||0)-(a.lastRead||0));
-  const grid = document.getElementById('book-grid');
-  const empty = document.getElementById('empty-lib');
-  const section = document.getElementById('book-section');
-  if (_books.length === 0) { empty.classList.remove('hidden'); section.classList.add('hidden'); return; }
-  empty.classList.add('hidden'); section.classList.remove('hidden');
-  grid.innerHTML = '';
-  _books.forEach(b => {
-    const color = SPINE_COLORS[simpleHash(b.title) % SPINE_COLORS.length];
-    const pct = b._totalPages ? Math.round((b.pageIdx||0)/b._totalPages*100) : 0;
-    const isNew = (Date.now()-(b.addedAt||0)) < 172800000;
-    const cell = document.createElement('div');
-    cell.className = 'book-cell';
-    cell.innerHTML = `
-      <div class="book-cover">
-        <div class="book-cover-spine" style="background:${color}"></div>
-        ${isNew?'<div class="book-cover-new">新</div>':''}
-        <div class="book-cover-title">${esc(b.title)}</div>
-        ${pct>0?`<div class="book-cover-prog">${pct}%</div>`:''}
-      </div>
-      <div class="book-name">${esc(b.title)}</div>`;
-    cell.addEventListener('click', ()=>openBook(b.id));
-    cell.addEventListener('touchstart', ()=>{ _longPressTimer=setTimeout(()=>showConfirm(b.id,b.title),650); },{passive:true});
-    cell.addEventListener('touchend',  ()=>clearTimeout(_longPressTimer),{passive:true});
-    cell.addEventListener('touchmove', ()=>clearTimeout(_longPressTimer),{passive:true});
-    grid.appendChild(cell);
+  _allBooks = await dbAll('books');
+  _allBooks.sort((a, b) => (b.lastRead || 0) - (a.lastRead || 0));
+  _drawBooks(_allBooks);
+}
+
+function _drawBooks(books) {
+  const list = document.getElementById('book-list');
+  document.getElementById('empty-lib').style.display = books.length === 0 ? 'flex' : 'none';
+  const EM = ['📖', '📚', '📜', '📕', '📗', '📘', '📙'];
+  list.innerHTML = '';
+  books.forEach(b => {
+    let h = 0; for (const c of b.title) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+    const emoji = EM[h % EM.length];
+    const pct = b.progress || 0;
+    const sz = b.size < 1048576 ? (b.size / 1024).toFixed(0) + 'KB' : (b.size / 1048576).toFixed(1) + 'MB';
+    const d = new Date(b.lastRead || b.addedAt);
+    const circ = 2 * Math.PI * 14, off = circ * (1 - pct / 100);
+    const row = document.createElement('div');
+    row.className = 'book-row';
+    row.innerHTML = `
+      <div class="b-thumb" style="background:linear-gradient(135deg,var(--accent),var(--accent-light))">${emoji}</div>
+      <div class="b-info"><div class="b-title">${esc(b.title)}</div><div class="b-meta">${sz} · ${d.getMonth() + 1}/${d.getDate()}</div></div>
+      <svg width="36" height="36" viewBox="0 0 36 36" style="flex-shrink:0">
+        <circle cx="18" cy="18" r="14" fill="none" stroke="var(--surface2)" stroke-width="3"/>
+        <circle cx="18" cy="18" r="14" fill="none" stroke="var(--accent)" stroke-width="3"
+          stroke-dasharray="${circ.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}"
+          transform="rotate(-90 18 18)" stroke-linecap="round"/>
+        <text x="18" y="22" text-anchor="middle" style="font-size:8px;fill:var(--text-dim);font-family:sans-serif">${pct}%</text>
+      </svg>`;
+    row.addEventListener('click', () => openBook(b.id));
+    let pt;
+    row.addEventListener('touchstart', () => { pt = setTimeout(() => { if (confirm(`刪除「${b.title}」？`)) dbDel('books', b.id).then(renderLibrary).then(() => showToast('已刪除')); }, 700); }, { passive: true });
+    row.addEventListener('touchend', () => clearTimeout(pt), { passive: true });
+    row.addEventListener('touchmove', () => clearTimeout(pt), { passive: true });
+    list.appendChild(row);
   });
 }
 
-// ── 刪除 ──
-function showConfirm(id, title) {
-  _deleteId = id;
-  document.getElementById('confirm-sub').textContent = `確定要刪除「${title}」？`;
-  document.getElementById('confirm-overlay').classList.add('open');
+function filterBooks(q) {
+  document.getElementById('s-clr').style.display = q ? 'block' : 'none';
+  document.getElementById('no-result').style.display = 'none';
+  if (!q) { _drawBooks(_allBooks); return; }
+  const f = _allBooks.filter(b => b.title.includes(q));
+  _drawBooks(f);
+  document.getElementById('no-result').style.display = f.length === 0 ? 'block' : 'none';
 }
-function closeConfirm() { _deleteId=null; document.getElementById('confirm-overlay').classList.remove('open'); }
-async function confirmDelete() {
-  if (!_deleteId) return;
-  await dbDel('books',_deleteId); closeConfirm(); showToast('已刪除'); await renderLibrary();
-}
+function clearSearch() { document.getElementById('search-input').value = ''; filterBooks(''); }
 
-// ── 分頁 ──
-function splitPages(text) {
-  const paras = text.split(/\n+/).map(p=>p.trim()).filter(p=>p.length>0);
-  const pages = []; let cur = '';
-  for (const para of paras) {
-    const cand = cur ? cur+'\n\n'+para : para;
-    if (cand.length > PAGE_CHARS && cur.length > 0) { pages.push(cur); cur = para; }
-    else cur = cand;
-    while (cur.length > PAGE_CHARS*1.5) { pages.push(cur.substring(0,PAGE_CHARS)); cur=cur.substring(PAGE_CHARS); }
-  }
-  if (cur) pages.push(cur);
-  return pages.length>0 ? pages : [''];
-}
-function detectChapters(pages) {
-  const reg = /^(第\s*[0-9一二三四五六七八九十百千萬]+\s*[章節回卷]|楔子|序章|尾聲)/;
-  return pages.reduce((arr,p,idx)=>{
-    const first = p.split('\n')[0].trim();
-    if (first.length>0 && first.length<30 && reg.test(first)) arr.push({name:first,pageIdx:idx});
-    return arr;
-  },[]);
-}
-
-// ── 開書 ──
+// ══════════════════════════════════════════
+// OPEN BOOK
+// ══════════════════════════════════════════
 async function openBook(id) {
-  const b = await dbGet('books',id); if (!b) return;
-  const pages = splitPages(b.content);
-  const chapters = detectChapters(pages);
-  const pageIdx = Math.min(b.pageIdx||0, pages.length-1);
-  _cur = {id, title:b.title, pages, chapters, pageIdx};
-  b.lastRead = Date.now(); b._totalPages = pages.length;
-  await dbPut('books',b);
+  const b = await dbGet('books', id); if (!b) return;
+  App.bookId = id; App.rawText = b.content; App.isConverted = false; App.displayText = b.content;
+  _savedPageIdx = b.pageIdx || 0;
+  _updateConvBtn();
+  _parseBook();
   document.getElementById('r-title').textContent = b.title;
-  document.getElementById('page-lib').classList.add('hidden');
+  document.getElementById('page-library').classList.add('hidden');
   document.getElementById('page-reader').classList.remove('hidden');
-  _uiVisible = false; applyUIState();
-  buildFlipCanvas(); goToPage(pageIdx, false);
+  hideUI();
+  _stopTTS(); _ttsIdx = 0; _ttsBusy = false;
+  document.getElementById('tts-cur').textContent = '點擊播放開始聽書';
+  setTimeout(() => { _buildLines(); buildFlipPages(); }, 100);
 }
 
-// ── 翻頁 ──
-function buildFlipCanvas() {
-  const canvas = document.getElementById('flip-canvas');
-  canvas.innerHTML = '';
-  if (!_cur) return;
-  _cur.pages.forEach(text => {
-    const pg = document.createElement('div'); pg.className = 'flip-page';
-    const el = document.createElement('div'); el.className = 'flip-page-text';
-    el.style.fontSize = _fontSize+'px'; el.textContent = text;
-    pg.appendChild(el); canvas.appendChild(pg);
-  });
-}
-function goToPage(idx, animate=true) {
-  if (!_cur) return;
-  idx = Math.max(0, Math.min(idx, _cur.pages.length-1));
-  _cur.pageIdx = idx;
-  const canvas = document.getElementById('flip-canvas');
-  if (!animate) canvas.style.transition='none';
-  canvas.style.transform = `translateX(-${idx*100}vw)`;
-  if (!animate) { canvas.offsetHeight; canvas.style.transition=''; }
-  document.getElementById('r-page-info').textContent = `第 ${idx+1} 頁　共 ${_cur.pages.length} 頁`;
-  saveProgress();
-}
-async function saveProgress() {
-  if (!_cur) return;
-  const b = await dbGet('books',_cur.id);
-  if (b) { b.pageIdx=_cur.pageIdx; b._totalPages=_cur.pages.length; b.lastRead=Date.now(); await dbPut('books',b); }
-}
-function prevPage() { if(!_cur)return; if(_uiVisible){hideUI();return;} if(_cur.pageIdx>0)goToPage(_cur.pageIdx-1); else showToast('已是第一頁'); }
-function nextPage() { if(!_cur)return; if(_uiVisible){hideUI();return;} if(_cur.pageIdx<_cur.pages.length-1)goToPage(_cur.pageIdx+1); else showToast('已是最後一頁'); }
-
-// ── 觸控滑動 ──
-function initTouch() {
-  const vp = document.getElementById('flip-viewport');
-  vp.addEventListener('touchstart',e=>{ _touchStartX=e.touches[0].clientX; _touchStartY=e.touches[0].clientY; },{passive:true});
-  vp.addEventListener('touchend',e=>{
-    const dx=e.changedTouches[0].clientX-_touchStartX;
-    const dy=e.changedTouches[0].clientY-_touchStartY;
-    if (Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>40) { if(dx<0)nextPage(); else prevPage(); }
-  },{passive:true});
-}
-
-// ── UI ──
-function toggleUI() { _uiVisible=!_uiVisible; applyUIState(); }
-function hideUI()   { _uiVisible=false; applyUIState(); }
-function applyUIState() {
-  document.getElementById('r-topbar').classList.toggle('hidden-ui',!_uiVisible);
-  document.getElementById('r-botbar').classList.toggle('hidden-ui',!_uiVisible);
-  // 隱藏 UI 時同時收起字級面板
-  if (!_uiVisible) closeSizePanel();
-}
-function closeReader() {
-  closeSizePanel();
-  closeTOC();
+function goLibrary() {
+  _stopTTS(); cancelTimer();
   document.getElementById('page-reader').classList.add('hidden');
-  document.getElementById('page-lib').classList.remove('hidden');
+  document.getElementById('page-library').classList.remove('hidden');
   renderLibrary();
 }
 
-// ── 目錄 ──
-function openTOC() {
-  if (!_cur) return;
-  const list = document.getElementById('toc-list');
-  list.innerHTML = _cur.chapters.length===0
-    ? '<div class="toc-item" style="color:var(--text-dim)">未偵測到章節</div>'
-    : _cur.chapters.map(ch=>`<div class="toc-item ${ch.pageIdx===_cur.pageIdx?'active':''}" onclick="jumpChapter(${ch.pageIdx})">${esc(ch.name)}</div>`).join('');
-  document.getElementById('toc-overlay').classList.add('open');
-  document.getElementById('toc-panel').classList.add('open');
-}
-function closeTOC() { document.getElementById('toc-overlay').classList.remove('open'); document.getElementById('toc-panel').classList.remove('open'); }
-function jumpChapter(idx) { closeTOC(); goToPage(idx); }
-
-// ── 字級 ──
-function openSizePanel() { document.getElementById('size-display').textContent=_fontSize+'px'; document.getElementById('size-panel').classList.add('open'); }
-function closeSizePanel() { document.getElementById('size-panel').classList.remove('open'); }
-function adjFontSize(d) {
-  _fontSize = Math.max(14,Math.min(32,_fontSize+d));
-  document.getElementById('size-display').textContent = _fontSize+'px';
-  document.querySelectorAll('.flip-page-text').forEach(el=>el.style.fontSize=_fontSize+'px');
-  saveSettings();
+function _parseBook() {
+  App.chapters = []; _ttsParas = []; let pi = 0;
+  App.displayText.split('\n').forEach(line => {
+    const t = line.trim(); if (!t) return;
+    if (CH_RE.test(t) && t.length < 60) App.chapters.push({ title: t, lineIdx: pi });
+    else { _ttsParas.push(t); pi++; }
+  });
 }
 
-// ── 初始化 ──
-async function init() {
-  document.getElementById('import-card').addEventListener('click', ()=>document.getElementById('file-input').click());
-  document.getElementById('file-input').addEventListener('change', function(){ handleFile(this); });
-  document.getElementById('tap-prev').addEventListener('click', prevPage);
-  document.getElementById('tap-mid').addEventListener('click', toggleUI);
-  document.getElementById('tap-next').addEventListener('click', nextPage);
-  await loadSettings();
-  await renderLibrary();
-  initTouch();
+// ══════════════════════════════════════════
+// CONVERT — 使用 OpenCC
+// ══════════════════════════════════════════
+function toggleConvert() {
+  App.isConverted = !App.isConverted;
+  App.displayText = App.isConverted ? s2t(App.rawText) : App.rawText;
+  _updateConvBtn();
+  _parseBook();
+  _buildLines();
+  buildFlipPages();
 }
+function _updateConvBtn() {
+  document.getElementById('conv-lbl').textContent = App.isConverted ? '已轉繁' : '簡→繁';
+  document.getElementById('tb-conv').classList.toggle('active', App.isConverted);
+}
+
+// ══════════════════════════════════════════
+// CHAPTERS
+// ══════════════════════════════════════════
+function _buildChapters() {
+  const list = document.getElementById('chapter-list');
+  if (!App.chapters.length) {
+    list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-dim);font-size:13px">未偵測到章節標題</div>'; return;
+  }
+  list.innerHTML = App.chapters.map((ch, i) =>
+    `<div class="ch-item" id="chi-${i}" onclick="jumpCh(${i})">${esc(ch.title)}</div>`
+  ).join('');
+}
+
+function jumpCh(i) {
+  const ch = App.chapters[i];
+  // 用字符位置找到對應行索引，再找所在頁面
+  const lineIdx = _lines.findIndex(l => l.t === ch.title);
+  if (lineIdx >= 0) {
+    // 找出該行屬於哪一頁
+    let charCount = 0;
+    for (let pi = 0; pi < _pages.length; pi++) {
+      charCount += _pages[pi].length;
+      if (charCount > lineIdx) { _pidx = pi; break; }
+    }
+    _renderFlip();
+  }
+  document.querySelectorAll('.ch-item').forEach(e => e.classList.remove('active'));
+  const ce = document.getElementById('chi-' + i); if (ce) ce.classList.add('active');
+  closeAllPanels();
+}
+
+// ══════════════════════════════════════════
+// BOOKMARKS
+// ══════════════════════════════════════════
+async function _renderBMs() {
+  if (!App.bookId) return;
+  const bms = await dbIdx('bms', 'bookId', App.bookId);
+  const list = document.getElementById('bookmark-list');
+  if (!bms.length) { list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-dim);font-size:13px">尚無書籤</div>'; return; }
+  list.innerHTML = bms.map(bm => `
+    <div class="bm-row">
+      <div class="bm-info" onclick="jumpBMPage(${bm.pageIdx})">
+        <div class="bm-prev">${esc(bm.preview)}</div>
+        <div class="bm-meta">${bm.progress}% · ${new Date(bm.createdAt).toLocaleString('zh-TW', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</div>
+      </div>
+      <button class="bm-del" onclick="delBM(${bm.id})">🗑</button>
+    </div>`).join('');
+}
+function jumpBMPage(pi) { _pidx = Math.min(pi, _pages.length - 1); _renderFlip(); closeAllPanels(); }
+async function delBM(id) { await dbDel('bms', id); _renderBMs(); }
+async function doAddBookmark() {
+  const pct = _pages.length > 1 ? Math.round(_pidx / (_pages.length - 1) * 100) : 100;
+  const firstLine = _pages[_pidx] && _pages[_pidx][0];
+  const preview = firstLine ? firstLine.t.substring(0, 22) + '…' : pct + '%';
+  const d = await openDB();
+  await new Promise((res, rej) => {
+    const r = d.transaction('bms', 'readwrite').objectStore('bms')
+      .add({ bookId: App.bookId, pageIdx: _pidx, progress: pct, preview, createdAt: Date.now() });
+    r.onsuccess = () => res(); r.onerror = rej;
+  });
+  _renderBMs(); showToast('🔖 書籤已加入');
+}
+
+// ══════════════════════════════════════════
+// SETTINGS
+// ══════════════════════════════════════════
+function applySettings() {
+  document.body.setAttribute('data-theme', App.s.theme);
+  document.querySelectorAll('[data-theme-btn]').forEach(b => b.classList.toggle('active', b.dataset.themeBtn === App.s.theme));
+  document.querySelectorAll('[data-font-btn]').forEach(b => b.classList.toggle('active', b.dataset.fontBtn === App.s.font));
+  document.querySelectorAll('[data-lh]').forEach(b => b.classList.toggle('active', parseFloat(b.dataset.lh) === App.s.lineHeight));
+  document.getElementById('font-size-val').textContent = App.s.fontSize;
+}
+function _rebuildIfReading() {
+  const rp = document.getElementById('page-reader');
+  if (rp && !rp.classList.contains('hidden') && _lines.length) buildFlipPages();
+}
+function changeFontSize(d) { App.s.fontSize = Math.max(12, Math.min(32, App.s.fontSize + d)); document.getElementById('font-size-val').textContent = App.s.fontSize; _rebuildIfReading(); saveS(); }
+function setTheme(t) { App.s.theme = t; document.body.setAttribute('data-theme', t); document.querySelectorAll('[data-theme-btn]').forEach(b => b.classList.toggle('active', b.dataset.themeBtn === t)); saveS(); }
+function setFont(f) { App.s.font = f; document.querySelectorAll('[data-font-btn]').forEach(b => b.classList.toggle('active', b.dataset.fontBtn === f)); _rebuildIfReading(); saveS(); }
+function setLH(v) { App.s.lineHeight = v; document.querySelectorAll('[data-lh]').forEach(b => b.classList.toggle('active', parseFloat(b.dataset.lh) === v)); _rebuildIfReading(); saveS(); }
+
+// ══════════════════════════════════════════
+// PANELS
+// ══════════════════════════════════════════
+function openPanel(id) {
+  if (id === 'panel-bookmarks') _renderBMs();
+  if (id === 'panel-chapters') _buildChapters();
+  document.getElementById(id).classList.add('open');
+  document.getElementById('overlay').classList.add('open');
+}
+function closeAllPanels() {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('open'));
+  document.getElementById('overlay').classList.remove('open');
+}
+
+// ══════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════
+function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+let _toastT;
+function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(_toastT); _toastT = setTimeout(() => t.classList.remove('show'), 2400); }
+
 document.addEventListener('DOMContentLoaded', init);
 </script>
 
