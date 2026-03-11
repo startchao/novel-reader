@@ -4,6 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link rel="manifest" href="manifest.json">
 <!-- BUILD: 2026-03-07-002 -->
 <title>書齋 · 閱讀器</title>
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -138,6 +139,9 @@ html,body{height:100%;overflow:hidden;font-family:‘Noto Sans TC’,sans-serif;
 ::-webkit-scrollbar{width:3px;}
 ::-webkit-scrollbar-thumb{background:var(–border);border-radius:2px;}
 #file-in{display:none;}
+/* IMMERSIVE MODE */
+.reader-hdr,.reader-ftr{transition:height .28s,opacity .28s,border .28s;}
+#reader-screen.immersive .reader-hdr,#reader-screen.immersive .reader-ftr{height:0!important;opacity:0;overflow:hidden;border:none;}
 </style>
 
 </head>
@@ -265,7 +269,7 @@ function saveDark(){try{localStorage.setItem('sz_d',darkMode?'1':'0');}catch(e){
 
 /* ── CHAPTER DETECTION ── */
 function parseChapters(text){
-  const RE=/^[\s\u3000]*(第\s*[零一二三四五六七八九十百千万\d]+\s*[章節节回卷篇集部][^\n]{0,50}|\d+\s*[\.、。]\s*[\u4e00-\u9fff][^\n]{0,40}|Chapter\s*\d+[^\n]{0,40})[\s\u3000]*$/;
+  const RE=/^[\s\u3000]*(第\s*[零一二三四五六七八九十百千万萬\d]+\s*[章節节回卷篇集部][^\n]{0,50}|\d+\s*[\.、。]\s*[\u4e00-\u9fff][^\n]{0,40}|Chapter\s*\d+[^\n]{0,40})[\s\u3000]*$/;
   const lines=text.split('\n');
   const chs=[];
   let title=null,buf=[];
@@ -361,11 +365,18 @@ function renderCh(){
   const sl=document.getElementById('slider');
   sl.style.transition='none';
   sl.style.transform='translateX(-100%)';
-  document.getElementById('vp1').scrollTop=0;
+  const saved=b.chapters[chIdx].scrollTop||0;
+  requestAnimationFrame(()=>{document.getElementById('vp1').scrollTop=saved;});
   b.lastCh=chIdx;saveBooks();
   document.getElementById('tts-info').textContent=title;
   if(ttsOn)stopTTS();
   applyTheme();
+}
+
+/* ── SCROLL POSITION ── */
+function saveScrollPos(){
+  if(cur===null||!books[cur])return;
+  books[cur].chapters[chIdx].scrollTop=document.getElementById('vp1').scrollTop;
 }
 
 /* ── SWIPE NAV ── */
@@ -389,6 +400,7 @@ wrap.addEventListener('touchend',e=>{
   isSwiping=false;
 });
 function doSlide(dir){
+  saveScrollPos();
   const w=wrap.offsetWidth;
   sl.style.transition='transform .32s cubic-bezier(.4,0,.2,1)';
   sl.style.transform=dir==='next'?`translateX(${-2*w}px)`:'translateX(0)';
@@ -396,8 +408,9 @@ function doSlide(dir){
 }
 document.getElementById('tz-next').addEventListener('click',()=>{if(chIdx<books[cur].chapters.length-1)doSlide('next');});
 document.getElementById('tz-prev').addEventListener('click',()=>{if(chIdx>0)doSlide('prev');});
-document.getElementById('prev-ch').addEventListener('click',()=>{if(chIdx>0){chIdx--;renderCh();}});
-document.getElementById('next-ch').addEventListener('click',()=>{if(chIdx<books[cur].chapters.length-1){chIdx++;renderCh();}});
+document.getElementById('tz-mid').addEventListener('click',()=>{document.getElementById('reader-screen').classList.toggle('immersive');});
+document.getElementById('prev-ch').addEventListener('click',()=>{if(chIdx>0){saveScrollPos();chIdx--;renderCh();}});
+document.getElementById('next-ch').addEventListener('click',()=>{if(chIdx<books[cur].chapters.length-1){saveScrollPos();chIdx++;renderCh();}});
 
 /* ── BACK ── */
 document.getElementById('back-btn').addEventListener('click',()=>{stopTTS();showScreen('shelf-screen');renderShelf();});
@@ -416,7 +429,7 @@ function buildTOC(){
     const el=document.createElement('div');
     el.className='toc-item'+(i===chIdx?' cur':'');
     el.innerHTML=`<div class="toc-dot"></div>${esc(ch.title)}`;
-    el.addEventListener('click',()=>{chIdx=i;renderCh();document.getElementById('toc-ov').classList.remove('open');});
+    el.addEventListener('click',()=>{saveScrollPos();chIdx=i;renderCh();document.getElementById('toc-ov').classList.remove('open');});
     list.appendChild(el);
   });
   setTimeout(()=>{const a=list.querySelector('.cur');if(a)a.scrollIntoView({block:'center'});},100);
@@ -458,9 +471,10 @@ document.getElementById('tts-tog').addEventListener('click',()=>{
   else bar.classList.add('open');
 });
 document.getElementById('tts-play').addEventListener('click',()=>{if(!ttsOn)startTTS();else if(ttsPaused)resumeTTS();else pauseTTS();});
-document.getElementById('tts-prev').addEventListener('click',()=>{stopTTS();if(chIdx>0){chIdx--;renderCh();}});
-document.getElementById('tts-nxt').addEventListener('click',()=>{stopTTS();if(chIdx<books[cur].chapters.length-1){chIdx++;renderCh();}});
+document.getElementById('tts-prev').addEventListener('click',()=>{stopTTS();if(chIdx>0){saveScrollPos();chIdx--;renderCh();}});
+document.getElementById('tts-nxt').addEventListener('click',()=>{stopTTS();if(chIdx<books[cur].chapters.length-1){saveScrollPos();chIdx++;renderCh();}});
 function startTTS(){
+  if(!('speechSynthesis' in window)){toast('此瀏覽器不支援語音朗讀');return;}
   const text=document.getElementById('vp1').querySelector('.vpage-text')?.textContent||'';
   ttsChunks=mkChunks(text,180);ttsCI=0;ttsOn=true;ttsPaused=false;
   document.getElementById('tts-play').textContent='⏸';speakNext();
