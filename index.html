@@ -26,14 +26,14 @@
   <div id="root"></div>
 
   <script type="text/babel">
-    const { useState } = React;
+    const { useState, useEffect } = React;
 
-    // --- 核心 API 函式 (已修復 URL 與模型標籤) ---
+    // --- 核心 API 函式 ---
     async function callGemini(prompt, system) {
       const key = localStorage.getItem('gemini_api_key');
       if (!key) throw new Error("請點擊右上角⚙️設定 API Key");
 
-      // 修改重點：使用 v1beta 端點並指定 gemini-1.5-flash-latest
+      // 採用最穩定的 v1beta 路徑
       const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${key}`;
 
       const res = await fetch(url, {
@@ -51,18 +51,51 @@
       });
 
       const data = await res.json();
-      
-      // 處理 API 回傳錯誤
-      if (data.error) {
-        throw new Error(`API 錯誤: ${data.error.message}`);
-      }
+      if (data.error) throw new Error(`API 錯誤 (${data.error.code}): ${data.error.message}`);
       
       try {
         const text = data.candidates[0].content.parts[0].text;
         return JSON.parse(text);
       } catch (e) {
-        throw new Error("AI 回傳格式異常，請再試一次");
+        throw new Error("AI 回傳格式解析失敗，請重新生成一次");
       }
+    }
+
+    // --- 設定視窗 (新增清除快取功能) ---
+    function Settings({ close }) {
+      const [k, setK] = useState(localStorage.getItem('gemini_api_key') || "");
+      
+      const save = () => {
+        localStorage.setItem('gemini_api_key', k);
+        close();
+      };
+
+      const clearAllCache = async () => {
+        if (confirm("確定要強制清除所有快取與設定嗎？這會重設 API Key 並重新載入頁面。")) {
+          localStorage.clear();
+          // 清除 Service Worker 快取
+          if ('caches' in window) {
+            const names = await caches.keys();
+            await Promise.all(names.map(name => caches.delete(name)));
+          }
+          // 強制重新載入
+          window.location.reload(true);
+        }
+      };
+
+      return (
+        <div className="fixed inset-0 z-50 bg-black/95 p-8 flex flex-col justify-center animate-in fade-in">
+          <h2 className="text-2xl font-bold mb-6 text-[#d4a843]">Gemini API 設定</h2>
+          <p className="text-xs opacity-40 mb-2">Google AI Studio API Key</p>
+          <input type="password" value={k} onChange={e=>setK(e.target.value)} className="p-4 glass rounded-xl mb-6 outline-none border-white/20 focus:border-[#d4a843]" placeholder="貼上您的 API Key..."/>
+          
+          <div className="space-y-4">
+            <button onClick={save} className="w-full bg-[#d4a843] text-black font-bold p-4 rounded-xl shadow-xl">儲存設定</button>
+            <button onClick={clearAllCache} className="w-full border border-red-500/50 text-red-500 text-sm p-3 rounded-xl">♻️ 強制清除快取並重設</button>
+            <button onClick={close} className="w-full text-xs opacity-30 text-center py-2">返回 Dojo</button>
+          </div>
+        </div>
+      );
     }
 
     // --- 字彙組件 ---
@@ -170,8 +203,8 @@
         setLoading(true); setShow(false);
         try {
           const res = await callGemini(
-            "Write a 350-word B2-C1 article about Taiwan Strait security or AI military applications.", 
-            "Return JSON: {\"t\":\"Title\",\"c\":\"Full content\",\"tr\":\"Full Translation\",\"an\":\"Key vocabulary and linguistic analysis\"}"
+            "Write a 350-word B2-C1 article about military technology or geopolitics.", 
+            "Return JSON: {\"t\":\"Title\",\"c\":\"Full content\",\"tr\":\"Full Translation\",\"an\":\"Key vocabulary and analysis\"}"
           );
           setArt(res);
         } catch(e) { alert(e.message); }
@@ -194,24 +227,6 @@
               )}
             </div>
           )}
-        </div>
-      );
-    }
-
-    // --- 設定視窗 ---
-    function Settings({ close }) {
-      const [k, setK] = useState(localStorage.getItem('gemini_api_key') || "");
-      const save = () => {
-        localStorage.setItem('gemini_api_key', k);
-        close();
-      };
-      return (
-        <div className="fixed inset-0 z-50 bg-black/95 p-8 flex flex-col justify-center">
-          <h2 className="text-2xl font-bold mb-6 text-[#d4a843]">Gemini API 設定</h2>
-          <p className="text-xs opacity-40 mb-2">請貼上您的 Google AI Studio API Key</p>
-          <input type="password" value={k} onChange={e=>setK(e.target.value)} className="p-4 glass rounded-xl mb-6 outline-none border-white/20 focus:border-[#d4a843]" placeholder="貼上 Key..."/>
-          <button onClick={save} className="bg-[#d4a843] text-black font-bold p-4 rounded-xl shadow-xl shadow-[#d4a843]/20">儲存並啟動 Dojo</button>
-          <button onClick={close} className="mt-4 text-xs opacity-30 text-center">取消</button>
         </div>
       );
     }
